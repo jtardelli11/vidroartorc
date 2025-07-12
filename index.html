@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VIDRO ART MUZ - Orçamentos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+  <style>
+.input-field {
+  width: 100%;
+  border: 1px solid #86efac;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input-field:focus {
+  ring: 2px;
+  ring-color: #4ade80;
+}
+
+.btn-green {
+  background-color: #16a34a;
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-black {
+  background-color: #000;
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+</style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-green-100 min-h-screen font-sans">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="bg-white shadow-xl rounded-2xl p-8 border border-green-200">
+      <div class="flex justify-center mb-4">
+        <img src="assets/logo_vidroart.jpg" alt="Logo VidroArt" class="h-32 object-contain">
+      </div>
+
+      <h1 class="text-4xl font-bold text-center text-green-900 mb-8 tracking-tight">Orçamento de Produtos</h1>
+
+      <div class="mb-6 border-b-2 border-green-300 pb-4">
+        <nav class="flex gap-4 text-sm font-medium text-green-800 border-b border-green-300 pb-2">
+          <button type="button" class="tab-btn active" onclick="mostrarAba('aba-cliente')">Dados do Cliente</button>
+          <button type="button" class="tab-btn" onclick="mostrarAba('aba-produtos')">Produtos</button>
+        </nav>
+      </div>
+
+      <form id="formulario" class="space-y-6">
+        <div id="aba-cliente" class="tab-content">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div>
+              <label class="block text-sm font-medium text-green-700">Nome do Cliente</label>
+              <input type="text" id="clienteNome" class="input-field" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-green-700">Telefone</label>
+              <input type="text" id="clienteTelefone" class="input-field" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-green-700">Email</label>
+              <input type="email" id="clienteEmail" class="input-field" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-green-700">Endereço</label>
+              <input type="text" id="clienteEndereco" class="input-field" />
+            </div>
+          </div>
+        </div>
+
+        <div id="aba-produtos" class="tab-content hidden">
+          <div id="produtos-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+          <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+            <button type="button" onclick="adicionarProduto()" class="btn-green">
+              <i class="fa-solid fa-plus"></i> Adicionar Produto
+            </button>
+          </div>
+
+          <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+            <button type="button" onclick="gerarPDF()" class="btn-black">
+              <i class="fa-solid fa-print"></i> Gerar Orçamento
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+let contador = 0;
+
+function adicionarProduto() {
+  contador++;
+  const container = document.getElementById('produtos-container');
+  const div = document.createElement('div');
+  div.className = "bg-white border border-green-300 rounded-lg shadow p-4";
+  div.innerHTML = `
+    <h2 class="text-lg font-semibold text-green-700 mb-2">Produto ${contador}</h2>
+
+    <label class="text-sm font-medium text-green-700">Tipo</label>
+    <input type="text" id="tipo${contador}" class="input-field mb-2">
+
+    <label class="text-sm font-medium text-green-700">Linha</label>
+    <input type="text" id="linha${contador}" class="input-field mb-2">
+
+    <label class="text-sm font-medium text-green-700">Localização</label>
+    <input type="text" id="localizacao${contador}" class="input-field mb-2">
+
+    <div class="flex gap-2">
+      <div class="w-1/2">
+        <label class="text-sm font-medium text-green-700">Largura (mm)</label>
+        <input type="number" id="largura${contador}" class="input-field mb-2">
+      </div>
+      <div class="w-1/2">
+        <label class="text-sm font-medium text-green-700">Altura (mm)</label>
+        <input type="number" id="altura${contador}" class="input-field mb-2">
+      </div>
+    </div>
+
+    <label class="text-sm font-medium text-green-700">Quantidade</label>
+    <input type="number" id="qtd${contador}" class="input-field mb-2" value="1">
+
+    <label class="text-sm font-medium text-green-700">Descrição</label>
+    <textarea id="descricao${contador}" class="input-field mb-2"></textarea>
+
+    <label class="text-sm font-medium text-green-700">Área Esquadria (m²)</label>
+    <input type="number" step="0.01" id="areaEsq${contador}" class="input-field mb-2">
+
+    <label class="text-sm font-medium text-green-700">Área Vidro (m²)</label>
+    <input type="number" step="0.01" id="areaVidro${contador}" class="input-field mb-2">
+
+    <label class="text-sm font-medium text-green-700">Vidro</label>
+    <input type="text" id="vidro${contador}" class="input-field mb-2">
+
+    <label class="text-sm font-medium text-green-700">Valor Unitário (R$)</label>
+    <input type="number" step="0.01" id="valorUnit${contador}" class="input-field mb-2">
+
+    <label class="text-sm font-medium text-green-700">Valor Total (R$)</label>
+    <input type="number" step="0.01" id="valorTotal${contador}" class="input-field mb-2">
+  `;
+  container.appendChild(div);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  for (let i = 0; i < 3; i++) adicionarProduto();
+});
+
+function mostrarAba(id) {
+  document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("border-b-2", "border-green-600", "font-bold"));
+  const ativa = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.textContent.includes(id.includes('cliente') ? 'Cliente' : 'Produtos'));
+  if (ativa) ativa.classList.add("border-b-2", "border-green-600", "font-bold");
+}
+
+
+function gerarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  let y = 15;
+
+  doc.setFontSize(10);
+  doc.text("Proposta de Orçamento", 80, y); y += 8;
+  doc.text("Emitido por: VIDRO ART MUZ", 20, y);
+  doc.text(new Date().toLocaleString(), 160, y); y += 10;
+
+  const nome = document.getElementById("clienteNome")?.value || "";
+  const telefone = document.getElementById("clienteTelefone")?.value || "";
+  const email = document.getElementById("clienteEmail")?.value || "";
+  const endereco = document.getElementById("clienteEndereco")?.value || "";
+
+  doc.text("Cliente: " + nome, 20, y);
+  doc.text("Tel.: " + telefone + "  E-mail: " + email, 20, y + 6);
+  doc.text("Endereço da obra: " + endereco, 20, y + 12);
+  y += 20;
+
+  doc.setFontSize(11);
+  doc.setFillColor(200, 230, 201);
+  doc.rect(20, y, 170, 8, "F");
+  doc.setTextColor(0);
+  doc.text("Tipo", 21, y + 5);
+  doc.text("Linha", 36, y + 5);
+  doc.text("Local", 58, y + 5);
+  doc.text("LxA", 83, y + 5);
+  doc.text("Qtd", 101, y + 5);
+  doc.text("Vidro", 116, y + 5);
+  doc.text("m² Vidro", 145, y + 5);
+  doc.text("Total (R$)", 170, y + 5, { align: "right" });
+  y += 10;
+
+  let totalGeral = 0;
+  let totalAreaVidro = 0;
+
+  for (let i = 1; i <= contador; i++) {
+    const tipo = document.getElementById("tipo" + i)?.value || "-";
+    const linha = document.getElementById("linha" + i)?.value || "-";
+    const local = document.getElementById("localizacao" + i)?.value || "-";
+    const largura = parseFloat(document.getElementById("largura" + i)?.value || "0");
+    const altura = parseFloat(document.getElementById("altura" + i)?.value || "0");
+    const qtd = document.getElementById("qtd" + i)?.value || "-";
+    const vidro = document.getElementById("vidro" + i)?.value || "-";
+    const areaVidro = parseFloat(document.getElementById("areaVidro" + i)?.value || "0");
+    const total = parseFloat(document.getElementById("valorTotal" + i)?.value || "0");
+
+    totalGeral += total;
+    totalAreaVidro += areaVidro;
+
+    const lxA = largura.toFixed(0) + "x" + altura.toFixed(0);
+    doc.setFontSize(10);
+    doc.text(tipo, 21, y);
+    doc.text(linha, 36, y);
+    doc.text(local, 58, y);
+    doc.text(lxA, 83, y);
+    doc.text(qtd.toString(), 103, y);
+    doc.text(vidro, 116, y);
+    doc.text(areaVidro.toFixed(2), 145, y);
+    doc.text("R$ " + total.toFixed(2), 170, y, { align: "right" });
+    y += 8;
+
+    if (y > 260) {
+      doc.addPage();
+      y = 20;
+    }
+  }
+
+  y += 10;
+  doc.setFontSize(11);
+  doc.text("Área total de vidros: " + totalAreaVidro.toFixed(2) + " m²", 20, y);
+  doc.text("Total do orçamento: R$ " + totalGeral.toFixed(2), 20, y + 6);
+
+  doc.setFontSize(9);
+  doc.text("* Orçamento válido por 5 dias corridos. Instalação inclusa conforme combinado.", 20, y + 14);
+
+  window.open(doc.output("bloburl"), "_blank");
+}
+</script>
+</body>
+</html>
