@@ -46,7 +46,7 @@
   <div class="max-w-7xl mx-auto px-4 py-6">
     <div class="bg-white shadow-xl rounded-2xl p-8 border border-green-200">
       <div class="flex justify-center mb-4">
-        <img src="logovidro.png" alt="Logo VidroArt" class="h-32 object-contain">
+        <h1 class="text-2xl font-bold text-green-900 text-center">VIDRO ART MUZ - CRIADOR DE ORÇAMENTO</h1>
       </div>
 
       <h1 class="text-4xl font-bold text-center text-green-900 mb-8 tracking-tight">Orçamento de Produtos</h1>
@@ -101,7 +101,6 @@
 
   <script>
 let contador = 0;
-
 function adicionarProduto() {
   contador++;
   const container = document.getElementById('produtos-container');
@@ -142,11 +141,9 @@ function adicionarProduto() {
   `;
   container.appendChild(div);
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   for (let i = 0; i < 3; i++) adicionarProduto();
 });
-
 function mostrarAba(id) {
   document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
@@ -154,27 +151,22 @@ function mostrarAba(id) {
   const ativa = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.textContent.includes(id.includes('cliente') ? 'Cliente' : 'Produtos'));
   if (ativa) ativa.classList.add("border-b-2", "border-green-600", "font-bold");
 }
-
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   let y = 15;
-
   doc.setFontSize(10);
   doc.text("Proposta de Orçamento", 80, y); y += 8;
   doc.text("Emitido por: VIDRO ART MUZ", 20, y);
   doc.text(new Date().toLocaleString(), 160, y); y += 10;
-
   const nome = document.getElementById("clienteNome")?.value || "";
   const telefone = document.getElementById("clienteTelefone")?.value || "";
   const email = document.getElementById("clienteEmail")?.value || "";
   const endereco = document.getElementById("clienteEndereco")?.value || "";
-
   doc.text("Cliente: " + nome, 20, y);
   doc.text("Tel.: " + telefone + "  E-mail: " + email, 20, y + 6);
   doc.text("Endereço da obra: " + endereco, 20, y + 12);
   y += 20;
-
   doc.setFontSize(11);
   doc.setFillColor(200, 230, 201);
   doc.rect(20, y, 170, 8, "F");
@@ -188,10 +180,8 @@ function gerarPDF() {
   doc.text("m² Vidro", 145, y + 5);
   doc.text("Total (R$)", 170, y + 5, { align: "right" });
   y += 10;
-
   let totalGeral = 0;
   let totalAreaVidro = 0;
-
   for (let i = 1; i <= contador; i++) {
     const tipo = document.getElementById("tipo" + i)?.value || "-";
     const linha = document.getElementById("linha" + i)?.value || "-";
@@ -202,10 +192,8 @@ function gerarPDF() {
     const vidro = document.getElementById("vidro" + i)?.value || "-";
     const areaVidro = parseFloat(document.getElementById("areaVidro" + i)?.value || "0");
     const total = parseFloat(document.getElementById("valorTotal" + i)?.value || "0");
-
     totalGeral += total;
     totalAreaVidro += areaVidro;
-
     const lxA = largura.toFixed(0) + "x" + altura.toFixed(0);
     doc.setFontSize(10);
     doc.text(tipo, 21, y);
@@ -217,21 +205,17 @@ function gerarPDF() {
     doc.text(areaVidro.toFixed(2), 145, y);
     doc.text("R$ " + total.toFixed(2), 170, y, { align: "right" });
     y += 8;
-
     if (y > 260) {
       doc.addPage();
       y = 20;
     }
   }
-
   y += 10;
   doc.setFontSize(11);
   doc.text("Área total de vidros: " + totalAreaVidro.toFixed(2) + " m²", 20, y);
   doc.text("Total do orçamento: R$ " + totalGeral.toFixed(2), 20, y + 6);
-
   doc.setFontSize(9);
   doc.text("* Orçamento válido por 5 dias corridos. Instalação inclusa conforme combinado.", 20, y + 14);
-
   window.open(doc.output("bloburl"), "_blank");
 }
 </script>
