@@ -1,13 +1,33 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VIDRO ART MUZ - Orçamentos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+    .glass-card {
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 1rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .transition-hover {
+      transition: all 0.3s ease-in-out;
+    }
+    .transition-hover:hover {
+      transform: scale(1.02);
+    }
     .input-field {
       width: 100%;
       border: 1px solid #86efac;
@@ -35,182 +55,227 @@
     }
   </style>
 </head>
-<body class="bg-green-50 font-sans">
-  <div class="max-w-6xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-xl p-6 border border-green-200">
-      <h1 class="text-3xl font-bold text-center text-green-900 mb-4">VIDRO ART MUZ - CRIADOR DE ORÇAMENTO</h1>
-      <div class="mb-4 flex justify-center gap-4">
-        <button type="button" class="tab-btn border-b-2 border-green-600 font-bold" onclick="mostrarAba('aba-cliente')">Dados do Cliente</button>
-        <button type="button" class="tab-btn" onclick="mostrarAba('aba-produtos')">Produtos</button>
-      </div>
+<body class="bg-gradient-to-br from-green-100 via-white to-green-50 min-h-screen">
+  <header class="bg-green-900 text-white py-6 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold tracking-wide">VIDRO ART MUZ</h1>
+      <nav class="space-x-4 text-sm">
+        <a href="#orcamento" class="hover:underline">Orçamento</a>
+        <a href="#servicos" class="hover:underline">Serviços</a>
+        <a href="#contato" class="hover:underline">Contato</a>
+      </nav>
+    </div>
+  </header>
 
-      <form id="formulario">
-        <div id="aba-cliente" class="tab-content">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <section class="text-center py-16 px-4 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1581387570087-51c1c87f3c0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');">
+    <div class="max-w-3xl mx-auto bg-white bg-opacity-80 p-8 rounded-2xl shadow-xl">
+      <h2 class="text-4xl font-bold text-green-900 mb-4">Soluções em Vidraçaria com Excelência</h2>
+      <p class="text-lg text-green-800">Portas, janelas, box e projetos sob medida para sua casa ou empresa.</p>
+    </div>
+  </section>
+
+  <section id="orcamento" class="py-16">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-green-800 text-center mb-10">Gerar Orçamento</h3>
+      <div class="glass-card p-8">
+        <form class="space-y-6 animate-fade-in">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input type="text" id="clienteNome" placeholder="Nome do Cliente" class="input-field">
             <input type="text" id="clienteTelefone" placeholder="Telefone" class="input-field">
-            <input type="email" id="clienteEmail" placeholder="Email" class="input-field">
+            <input type="email" id="clienteEmail" placeholder="E-mail" class="input-field">
             <input type="text" id="clienteEndereco" placeholder="Endereço da Obra" class="input-field">
           </div>
-        </div>
-
-        <div id="aba-produtos" class="tab-content hidden mt-4">
-          <div id="produtos-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-          <div class="mt-6 flex justify-center gap-4">
-            <button type="button" onclick="adicionarProduto()" class="btn-green"><i class="fa fa-plus"></i> Adicionar Produto</button>
-            <button type="button" onclick="gerarPDF()" class="btn-black"><i class="fa fa-file-pdf"></i> Gerar Orçamento</button>
+          <hr class="my-6 border-green-200">
+          <div class="grid grid-cols-1 gap-4">
+            <input type="text" id="produtoNome" placeholder="Produto (ex: Box Incolor 8mm)" class="input-field">
+            <div class="grid grid-cols-2 gap-4">
+              <input type="number" id="produtoLargura" placeholder="Largura (mm)" class="input-field">
+              <input type="number" id="produtoAltura" placeholder="Altura (mm)" class="input-field">
+            </div>
+            <input type="number" id="produtoQtd" placeholder="Quantidade" value="1" class="input-field">
+            <input type="text" id="produtoVidro" placeholder="Vidro (ex: temperado, fumê, etc.)" class="input-field">
+            <input type="number" step="0.01" id="produtoArea" placeholder="Área Total (m²)" class="input-field">
+            <input type="number" step="0.01" id="produtoUnitario" placeholder="Valor Unitário (R$)" class="input-field">
+            <input type="number" step="0.01" id="produtoTotal" placeholder="Valor Total (R$)" class="input-field">
+            <input type="file" accept="image/*" id="produtoFoto" class="input-field">
           </div>
-        </div>
-      </form>
+          <div class="flex justify-center gap-4">
+            <button type="button" class="btn-green"><i class="fas fa-plus"></i> Adicionar Produto</button>
+            <button type="button" class="btn-black" onclick="gerarPDF()"><i class="fas fa-file-pdf"></i> Gerar Orçamento</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <section id="servicos" class="py-16 bg-green-50">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-green-800 text-center mb-10">Nossos Serviços</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card p-6 transition-hover">
+          <i class="fas fa-door-open text-green-800 text-3xl mb-4"></i>
+          <h4 class="font-bold text-lg text-green-900 mb-2">Portas de Vidro</h4>
+          <p class="text-green-800 text-sm">Portas pivotantes, de correr e sob medida com acabamento de alto padrão.</p>
+        </div>
+        <div class="glass-card p-6 transition-hover">
+          <i class="fas fa-shower text-green-800 text-3xl mb-4"></i>
+          <h4 class="font-bold text-lg text-green-900 mb-2">Box para Banheiro</h4>
+          <p class="text-green-800 text-sm">Modelos modernos, seguros e fáceis de limpar com instalação inclusa.</p>
+        </div>
+        <div class="glass-card p-6 transition-hover">
+          <i class="fas fa-building text-green-800 text-3xl mb-4"></i>
+          <h4 class="font-bold text-lg text-green-900 mb-2">Fechamentos e Fachadas</h4>
+          <p class="text-green-800 text-sm">Projetos personalizados para fachadas comerciais e varandas residenciais.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato" class="py-16">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-green-800 text-center mb-10">Fale Conosco</h3>
+      <div class="glass-card p-8 max-w-xl mx-auto">
+        <form class="grid grid-cols-1 gap-6">
+          <input type="text" placeholder="Seu nome" class="input-field">
+          <input type="email" placeholder="Seu e-mail" class="input-field">
+          <textarea rows="4" placeholder="Sua mensagem" class="input-field"></textarea>
+          <button class="btn-green justify-center w-full"><i class="fas fa-paper-plane"></i> Enviar Mensagem</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-green-900 text-white text-center py-6 mt-16">
+    <p>&copy; 2025 VIDRO ART MUZ. Todos os direitos reservados.</p>
+  </footer>
 
   <script>
-let contador = 0;
-function adicionarProduto() {
-  contador++;
-  const container = document.getElementById('produtos-container');
-  const div = document.createElement('div');
-  div.className = "bg-white border border-green-300 rounded-lg shadow p-4";
-  div.innerHTML = `
-    <h2 class="text-lg font-semibold text-green-700 mb-2">Produto ${contador}</h2>
-    <label class="text-sm font-medium text-green-700">Tipo</label>
-    <input type="text" id="tipo${contador}" class="input-field mb-2">
-    <label class="text-sm font-medium text-green-700">Linha</label>
-    <input type="text" id="linha${contador}" class="input-field mb-2">
-    <label class="text-sm font-medium text-green-700">Localização</label>
-    <input type="text" id="localizacao${contador}" class="input-field mb-2">
-    <div class="flex gap-2">
-      <div class="w-1/2"><label class="text-sm font-medium text-green-700">Largura (mm)</label><input type="number" id="largura${contador}" class="input-field mb-2"></div>
-      <div class="w-1/2"><label class="text-sm font-medium text-green-700">Altura (mm)</label><input type="number" id="altura${contador}" class="input-field mb-2"></div>
-    </div>
-    <label class="text-sm font-medium text-green-700">Quantidade</label>
-    <input type="number" id="qtd${contador}" class="input-field mb-2" value="1">
-    <label class="text-sm font-medium text-green-700">Descrição</label>
-    <textarea id="descricao${contador}" class="input-field mb-2"></textarea>
-    <label class="text-sm font-medium text-green-700">Área Esquadria (m²)</label>
-    <input type="number" step="0.01" id="areaEsq${contador}" class="input-field mb-2">
-    <label class="text-sm font-medium text-green-700">Área Vidro (m²)</label>
-    <input type="number" step="0.01" id="areaVidro${contador}" class="input-field mb-2">
-    <label class="text-sm font-medium text-green-700">Vidro</label>
-    <input type="text" id="vidro${contador}" class="input-field mb-2">
-    <label class="text-sm font-medium text-green-700">Valor Unitário (R$)</label>
-    <input type="number" step="0.01" id="valorUnit${contador}" class="input-field mb-2">
-    <label class="text-sm font-medium text-green-700">Valor Total (R$)</label>
-    <input type="number" step="0.01" id="valorTotal${contador}" class="input-field mb-2">
-    <label class="text-sm font-medium text-green-700">Foto (opcional)</label>
-    <input type="file" accept="image/*" id="foto${contador}" class="input-field mb-2" />
-  `;
-  container.appendChild(div);
-}
+    async function gerarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("p", "mm", "a4");
+      let y = 20;
 
-document.addEventListener("DOMContentLoaded", () => {
-  for (let i = 0; i < 3; i++) adicionarProduto();
-});
+      // Logo e cabeçalho da empresa
+      doc.setFontSize(12);
+      doc.setFont(undefined, "bold");
+      doc.text("VIDRO ART MUZ", 20, y);
+      doc.setFontSize(10);
+      doc.setFont(undefined, "normal");
+      doc.text("Endereço: Rua Exemplo, 123 - Centro - Cidade - UF", 20, y += 6);
+      doc.text("CNPJ: 00.000.000/0001-00", 20, y += 5);
+      doc.text("Telefone: (35) 99999-9999", 20, y += 5);
+      doc.text("Email: contato@vidroartmuz.com.br", 20, y += 5);
+      y += 10;
 
-function mostrarAba(id) {
-  document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("border-b-2", "border-green-600", "font-bold"));
-  const ativa = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.textContent.includes(id.includes('cliente') ? 'Cliente' : 'Produtos'));
-  if (ativa) ativa.classList.add("border-b-2", "border-green-600", "font-bold");
-}
+      // Dados do cliente
+      doc.setFontSize(11);
+      doc.setFont(undefined, "bold");
+      doc.text("DADOS DO CLIENTE", 20, y);
+      doc.setFont(undefined, "normal");
+      y += 6;
+      doc.text(`Nome: ${document.getElementById("clienteNome").value}`, 20, y);
+      doc.text(`Telefone: ${document.getElementById("clienteTelefone").value}`, 20, y += 6);
+      doc.text(`E-mail: ${document.getElementById("clienteEmail").value}`, 20, y += 6);
+      doc.text(`Endereço da Obra: ${document.getElementById("clienteEndereco").value}`, 20, y += 6);
+      y += 10;
 
-function gerarPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
-  let y = 15;
-  doc.setFontSize(10);
-  doc.text("Proposta de Orçamento", 80, y); y += 8;
-  doc.text("Emitido por: VIDRO ART MUZ", 20, y);
-  doc.text(new Date().toLocaleString(), 160, y); y += 10;
+      // Título produtos
+      doc.setFillColor(16, 163, 74);
+      doc.setTextColor(255);
+      doc.rect(20, y, 170, 8, "F");
+      doc.text("PRODUTOS", 105, y + 5, { align: "center" });
+      y += 14;
+      doc.setTextColor(0);
 
-  const nome = document.getElementById("clienteNome")?.value || "";
-  const telefone = document.getElementById("clienteTelefone")?.value || "";
-  const email = document.getElementById("clienteEmail")?.value || "";
-  const endereco = document.getElementById("clienteEndereco")?.value || "";
-  doc.text("Cliente: " + nome, 20, y);
-  doc.text("Tel.: " + telefone + "  E-mail: " + email, 20, y + 6);
-  doc.text("Endereço da obra: " + endereco, 20, y + 12);
-  y += 20;
+      // Produto 1 (único por enquanto)
+      doc.setFont(undefined, "bold");
+      doc.text("ITEM 1", 20, y);
+      doc.setFont(undefined, "normal");
 
-  doc.setFontSize(11);
-  doc.setFillColor(200, 230, 201);
-  doc.rect(20, y, 170, 8, "F");
-  doc.setTextColor(0);
+      const nomeProduto = document.getElementById("produtoNome").value;
+      const largura = document.getElementById("produtoLargura").value;
+      const altura = document.getElementById("produtoAltura").value;
+      const qtd = document.getElementById("produtoQtd").value;
+      const vidro = document.getElementById("produtoVidro").value;
+      const area = document.getElementById("produtoArea").value;
+      const unitario = document.getElementById("produtoUnitario").value;
+      const total = document.getElementById("produtoTotal").value;
+      const fotoFile = document.getElementById("produtoFoto").files[0];
 
-  const colWidths = [30, 30, 40, 30, 20, 30, 30, 30];
-  const headers = ["Tipo", "Linha", "Local", "LxA", "Qtd", "Vidro", "m² Vidro", "Total (R$)"];
+      const produtoY = y + 6;
+      let imageHeight = 0;
 
-  headers.forEach((header, index) => {
-    doc.text(header, 20 + colWidths.slice(0, index).reduce((a, b) => a + b, 0), y + 5);
-  });
-
-  y += 10;
-  let totalGeral = 0;
-  let totalAreaVidro = 0;
-  const promises = [];
-
-  for (let i = 1; i <= contador; i++) {
-    const tipo = document.getElementById("tipo" + i)?.value || "-";
-    const linha = document.getElementById("linha" + i)?.value || "-";
-    const local = document.getElementById("localizacao" + i)?.value || "-";
-    const largura = parseFloat(document.getElementById("largura" + i)?.value || "0");
-    const altura = parseFloat(document.getElementById("altura" + i)?.value || "0");
-    const qtd = document.getElementById("qtd" + i)?.value || "-";
-    const vidro = document.getElementById("vidro" + i)?.value || "-";
-    const areaVidro = parseFloat(document.getElementById("areaVidro" + i)?.value || "0");
-    const total = parseFloat(document.getElementById("valorTotal" + i)?.value || "0");
-    const fotoFile = document.getElementById("foto" + i)?.files[0];
-
-    totalGeral += total;
-    totalAreaVidro += areaVidro;
-    const lxA = largura.toFixed(0) + "x" + altura.toFixed(0);
-
-    doc.setFontSize(10);
-    const rowData = [tipo, linha, local, lxA, qtd.toString(), vidro, areaVidro.toFixed(2), "R$ " + total.toFixed(2)];
-
-    rowData.forEach((data, index) => {
-      doc.text(data, 20 + colWidths.slice(0, index).reduce((a, b) => a + b, 0), y);
-    });
-
-    y += 8;
-
-    if (fotoFile) {
-      const reader = new FileReader();
-      promises.push(new Promise(resolve => {
+      if (fotoFile) {
+        const reader = new FileReader();
         reader.onload = function (e) {
           const img = new Image();
           img.onload = function () {
             const width = 30;
-            const height = (img.height / img.width) * width;
-            if (y + height + 10 > 280) { doc.addPage(); y = 20; }
-            y += 2;
-            doc.addImage(e.target.result, "JPEG", 20, y, width, height);
-            y += height + 5;
-            resolve();
+            imageHeight = (img.height / img.width) * width;
+            doc.addImage(e.target.result, "JPEG", 20, produtoY, width, imageHeight);
+
+            // Texto ao lado da imagem
+            const textX = 55;
+            let textY = produtoY;
+            doc.text(`Produto: ${nomeProduto}`, textX, textY);
+            doc.text(`Largura x Altura: ${largura} x ${altura} mm`, textX, textY += 6);
+            doc.text(`Vidro: ${vidro}`, textX, textY += 6);
+            doc.text(`Área: ${area} m²`, textX, textY += 6);
+            doc.text(`Quantidade: ${qtd}`, textX, textY += 6);
+            doc.text(`Valor Unitário: R$ ${unitario}`, textX, textY += 6);
+            doc.setFont(undefined, "bold");
+            doc.text(`VALOR TOTAL: R$ ${total}`, textX, textY += 8);
+
+            y = textY + 10;
+
+            adicionarRodape();
           };
           img.src = e.target.result;
         };
         reader.readAsDataURL(fotoFile);
-      }));
-    } else {
-      y += 8;
+      } else {
+        // Sem imagem
+        doc.text(`Produto: ${nomeProduto}`, 20, y);
+        doc.text(`Largura x Altura: ${largura} x ${altura} mm`, 20, y += 6);
+        doc.text(`Vidro: ${vidro}`, 20, y += 6);
+        doc.text(`Área: ${area} m²`, 20, y += 6);
+        doc.text(`Quantidade: ${qtd}`, 20, y += 6);
+        doc.text(`Valor Unitário: R$ ${unitario}`, 20, y += 6);
+        doc.setFont(undefined, "bold");
+        doc.text(`VALOR TOTAL: R$ ${total}`, 20, y += 8);
+
+        adicionarRodape();
+      }
+
+      function adicionarRodape() {
+        y += 10;
+        doc.setFont(undefined, "normal");
+        const hoje = new Date();
+        const entrega = new Date();
+        entrega.setDate(hoje.getDate() + 10);
+
+        doc.setFontSize(10);
+        doc.text("PREVISÃO DE ENTREGA:", 20, y);
+        doc.text(entrega.toLocaleDateString(), 70, y);
+        doc.text("ORÇAMENTO VÁLIDO ATÉ:", 120, y);
+        doc.text(new Date(hoje.getTime() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString(), 170, y, { align: "right" });
+
+        y += 10;
+        doc.setFontSize(11);
+        doc.setFont(undefined, "bold");
+        doc.text(`VALOR FINAL: R$ ${total}`, 20, y);
+
+        y += 20;
+        doc.line(20, y, 190, y);
+        doc.setFontSize(10);
+        doc.setFont(undefined, "normal");
+        doc.text("CLIENTE", 20, y + 5);
+        doc.text("MODELO", 160, y + 5);
+
+        window.open(doc.output("bloburl"), "_blank");
+      }
     }
-
-    if (y > 260) { doc.addPage(); y = 20; }
-  }
-
-  Promise.all(promises).then(() => {
-    y += 10;
-    doc.setFontSize(11);
-    doc.text("Área total de vidros: " + totalAreaVidro.toFixed(2) + " m²", 20, y);
-    doc.text("Total do orçamento: R$ " + totalGeral.toFixed(2), 20, y + 6);
-    doc.setFontSize(9);
-    doc.text("* Orçamento válido por 5 dias corridos. Instalação inclusa conforme combinado.", 20, y + 14);
-    window.open(doc.output("bloburl"), "_blank");
-  });
-}
-</script>
+  </script>
 </body>
 </html>
+```
