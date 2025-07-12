@@ -8,75 +8,64 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-.input-field {
-  width: 100%;
-  border: 1px solid #86efac;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-  outline: none;
-  transition: 0.3s;
-}
-.input-field:focus {
-  ring: 2px;
-  ring-color: #4ade80;
-}
-.btn-green {
-  background-color: #16a34a;
-  color: white;
-  padding: 0.5rem 1.25rem;
-  border-radius: 0.375rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-.btn-black {
-  background-color: #000;
-  color: white;
-  padding: 0.5rem 1.25rem;
-  border-radius: 0.375rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-</style>
+    .input-field {
+      width: 100%;
+      border: 1px solid #86efac;
+      border-radius: 0.375rem;
+      padding: 0.5rem;
+      outline: none;
+    }
+    .btn-green {
+      background-color: #16a34a;
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.375rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .btn-black {
+      background-color: #000;
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.375rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-green-50 to-green-100 min-h-screen font-sans">
-  <div class="max-w-7xl mx-auto px-4 py-6">
-    <div class="bg-white shadow-xl rounded-2xl p-8 border border-green-200">
-      <div class="flex justify-center mb-4">
-        <h1 class="text-2xl font-bold text-green-900 text-center">VIDRO ART MUZ - CRIADOR DE ORÇAMENTO</h1>
+<body class="bg-green-50 font-sans">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <div class="bg-white rounded-xl p-6 border border-green-200">
+      <h1 class="text-3xl font-bold text-center text-green-900 mb-4">VIDRO ART MUZ - CRIADOR DE ORÇAMENTO</h1>
+      <div class="mb-4 flex justify-center gap-4">
+        <button type="button" class="tab-btn border-b-2 border-green-600 font-bold" onclick="mostrarAba('aba-cliente')">Dados do Cliente</button>
+        <button type="button" class="tab-btn" onclick="mostrarAba('aba-produtos')">Produtos</button>
       </div>
-      <h1 class="text-4xl font-bold text-center text-green-900 mb-8 tracking-tight">Orçamento de Produtos</h1>
-      <div class="mb-6 border-b-2 border-green-300 pb-4">
-        <nav class="flex gap-4 text-sm font-medium text-green-800 border-b border-green-300 pb-2">
-          <button type="button" class="tab-btn active" onclick="mostrarAba('aba-cliente')">Dados do Cliente</button>
-          <button type="button" class="tab-btn" onclick="mostrarAba('aba-produtos')">Produtos</button>
-        </nav>
-      </div>
-      <form id="formulario" class="space-y-6">
+
+      <form id="formulario">
         <div id="aba-cliente" class="tab-content">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-            <div><label class="block text-sm font-medium text-green-700">Nome do Cliente</label><input type="text" id="clienteNome" class="input-field" /></div>
-            <div><label class="block text-sm font-medium text-green-700">Telefone</label><input type="text" id="clienteTelefone" class="input-field" /></div>
-            <div><label class="block text-sm font-medium text-green-700">Email</label><input type="email" id="clienteEmail" class="input-field" /></div>
-            <div><label class="block text-sm font-medium text-green-700">Endereço</label><input type="text" id="clienteEndereco" class="input-field" /></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <input type="text" id="clienteNome" placeholder="Nome do Cliente" class="input-field">
+            <input type="text" id="clienteTelefone" placeholder="Telefone" class="input-field">
+            <input type="email" id="clienteEmail" placeholder="Email" class="input-field">
+            <input type="text" id="clienteEndereco" placeholder="Endereço da Obra" class="input-field">
           </div>
         </div>
-        <div id="aba-produtos" class="tab-content hidden">
+
+        <div id="aba-produtos" class="tab-content hidden mt-4">
           <div id="produtos-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-          <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
-            <button type="button" onclick="adicionarProduto()" class="btn-green"><i class="fa-solid fa-plus"></i> Adicionar Produto</button>
-          </div>
-          <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
-            <button type="button" onclick="gerarPDF()" class="btn-black"><i class="fa-solid fa-print"></i> Gerar Orçamento</button>
+          <div class="mt-6 flex justify-center gap-4">
+            <button type="button" onclick="adicionarProduto()" class="btn-green"><i class="fa fa-plus"></i> Adicionar Produto</button>
+            <button type="button" onclick="gerarPDF()" class="btn-black"><i class="fa fa-file-pdf"></i> Gerar Orçamento</button>
           </div>
         </div>
       </form>
     </div>
   </div>
-<script>
+
+  <script>
 let contador = 0;
 function adicionarProduto() {
   contador++;
@@ -114,9 +103,11 @@ function adicionarProduto() {
   `;
   container.appendChild(div);
 }
+
 document.addEventListener("DOMContentLoaded", () => {
   for (let i = 0; i < 3; i++) adicionarProduto();
 });
+
 function mostrarAba(id) {
   document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
@@ -124,6 +115,7 @@ function mostrarAba(id) {
   const ativa = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.textContent.includes(id.includes('cliente') ? 'Cliente' : 'Produtos'));
   if (ativa) ativa.classList.add("border-b-2", "border-green-600", "font-bold");
 }
+
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
@@ -132,6 +124,7 @@ function gerarPDF() {
   doc.text("Proposta de Orçamento", 80, y); y += 8;
   doc.text("Emitido por: VIDRO ART MUZ", 20, y);
   doc.text(new Date().toLocaleString(), 160, y); y += 10;
+
   const nome = document.getElementById("clienteNome")?.value || "";
   const telefone = document.getElementById("clienteTelefone")?.value || "";
   const email = document.getElementById("clienteEmail")?.value || "";
@@ -140,22 +133,24 @@ function gerarPDF() {
   doc.text("Tel.: " + telefone + "  E-mail: " + email, 20, y + 6);
   doc.text("Endereço da obra: " + endereco, 20, y + 12);
   y += 20;
+
   doc.setFontSize(11);
   doc.setFillColor(200, 230, 201);
   doc.rect(20, y, 170, 8, "F");
   doc.setTextColor(0);
-  doc.text("Tipo", 21, y + 5);
-  doc.text("Linha", 36, y + 5);
-  doc.text("Local", 58, y + 5);
-  doc.text("LxA", 83, y + 5);
-  doc.text("Qtd", 101, y + 5);
-  doc.text("Vidro", 116, y + 5);
-  doc.text("m² Vidro", 145, y + 5);
-  doc.text("Total (R$)", 170, y + 5, { align: "right" });
+
+  const colWidths = [30, 30, 40, 30, 20, 30, 30, 30];
+  const headers = ["Tipo", "Linha", "Local", "LxA", "Qtd", "Vidro", "m² Vidro", "Total (R$)"];
+
+  headers.forEach((header, index) => {
+    doc.text(header, 20 + colWidths.slice(0, index).reduce((a, b) => a + b, 0), y + 5);
+  });
+
   y += 10;
   let totalGeral = 0;
   let totalAreaVidro = 0;
   const promises = [];
+
   for (let i = 1; i <= contador; i++) {
     const tipo = document.getElementById("tipo" + i)?.value || "-";
     const linha = document.getElementById("linha" + i)?.value || "-";
@@ -167,25 +162,27 @@ function gerarPDF() {
     const areaVidro = parseFloat(document.getElementById("areaVidro" + i)?.value || "0");
     const total = parseFloat(document.getElementById("valorTotal" + i)?.value || "0");
     const fotoFile = document.getElementById("foto" + i)?.files[0];
+
     totalGeral += total;
     totalAreaVidro += areaVidro;
     const lxA = largura.toFixed(0) + "x" + altura.toFixed(0);
+
     doc.setFontSize(10);
-    doc.text(tipo, 21, y);
-    doc.text(linha, 36, y);
-    doc.text(local, 58, y);
-    doc.text(lxA, 83, y);
-    doc.text(qtd.toString(), 103, y);
-    doc.text(vidro, 116, y);
-    doc.text(areaVidro.toFixed(2), 145, y);
-    doc.text("R$ " + total.toFixed(2), 170, y, { align: "right" });
+    const rowData = [tipo, linha, local, lxA, qtd.toString(), vidro, areaVidro.toFixed(2), "R$ " + total.toFixed(2)];
+
+    rowData.forEach((data, index) => {
+      doc.text(data, 20 + colWidths.slice(0, index).reduce((a, b) => a + b, 0), y);
+    });
+
+    y += 8;
+
     if (fotoFile) {
       const reader = new FileReader();
       promises.push(new Promise(resolve => {
         reader.onload = function (e) {
           const img = new Image();
           img.onload = function () {
-            const width = 50;
+            const width = 30;
             const height = (img.height / img.width) * width;
             if (y + height + 10 > 280) { doc.addPage(); y = 20; }
             y += 2;
@@ -200,8 +197,10 @@ function gerarPDF() {
     } else {
       y += 8;
     }
+
     if (y > 260) { doc.addPage(); y = 20; }
   }
+
   Promise.all(promises).then(() => {
     y += 10;
     doc.setFontSize(11);
