@@ -1,10 +1,3 @@
-Que ótimo que gostou! Com certeza, vamos deixar o verde um pouco mais forte e o efeito de iluminação maior para que ele se estenda por uma área maior da tela.
-
-Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade) e as porcentagens de parada do `linear-gradient` para que o efeito seja mais abrangente.
-
-### **Modificações no Código HTML e CSS:**
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -24,7 +17,6 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
       color: #f8f9fa; /* Off-white para o texto padrão */
       line-height: 1.6;
       /* Efeito de iluminação verde no topo */
-      /* Aumentado a opacidade do verde (0.3) e a área de transição (30% e 60%) */
       background-image: linear-gradient(to bottom, rgba(40, 167, 69, 0.3), rgba(40, 167, 69, 0) 30%, #1a1a1a 60%);
       background-attachment: fixed; /* Para que o gradiente fique fixo no topo da viewport */
       background-repeat: no-repeat;
@@ -56,7 +48,6 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
       outline: none;
       color: #f8f9fa; /* Off-white */
       transition: background 0.3s ease, box-shadow 0.3s ease;
-      /* Remover borda padrão, usar box-shadow para foco */
       border: none;
     }
     .input-field::placeholder {
@@ -79,7 +70,6 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
         position: relative;
         display: inline-block;
         vertical-align: middle;
-        /* Remover borda padrão, usar box-shadow para foco */
         border: none;
         box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); /* Borda interna sutil */
     }
@@ -95,6 +85,35 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
         text-align: center;
         line-height: 1.25rem;
     }
+    /* Estilo específico para o input de cor */
+    .input-field[type="color"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 40px; /* Largura menor para a caixa de cor */
+      height: 40px; /* Altura menor para a caixa de cor */
+      border: none;
+      padding: 0;
+      background: none;
+      cursor: pointer;
+      border-radius: 0.5rem; /* Bordas arredondadas */
+      overflow: hidden; /* Para garantir que a cor preencha o border-radius */
+    }
+    .input-field[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    .input-field[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 0.5rem; /* Bordas arredondadas */
+    }
+    .input-field[type="color"]::-moz-color-swatch-wrapper {
+      padding: 0;
+    }
+    .input-field[type="color"]::-moz-color-swatch {
+      border: none;
+      border-radius: 0.5rem; /* Bordas arredondadas */
+    }
+
 
     .btn-green {
       background-color: #28a745; /* Verde principal */
@@ -182,6 +201,15 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
     }
     .product-item button:hover {
         color: #c82333; /* Vermelho mais escuro no hover */
+    }
+    .product-item .color-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 5px; /* Espaçamento à direita para separar do texto */
     }
 
     /* Animações de entrada */
@@ -341,14 +369,14 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
 
   <section class="text-center py-20 px-4 hero-section text-white">
     <div class="max-w-3xl mx-auto p-8 rounded-2xl animate-fade-in">
-      <h2 class="text-5xl font-bold mb-4 leading-tight">Soluções em Vidraçaria com Excelência</h2>
+      <h2 class="text-5xl font-bold mb-4 leading-tight">A Referência em Soluções de Vidro para Residências e Empresas</h2>
       <p class="text-xl opacity-90">Portas, janelas, box e projetos sob medida para sua casa ou empresa.</p>
     </div>
   </section>
 
   <section id="orcamento" class="py-16">
     <div class="max-w-6xl mx-auto px-4">
-      <h3 class="text-4xl font-bold text-center mb-12 animate-slide-up">Gerar Orçamento</h3>
+      <h3 class="text-4xl font-bold text-center mb-12 animate-slide-up">Painel de Geração de Orçamentos</h3>
       <div class="glass-card p-10 animate-slide-up">
         <form class="space-y-8" onsubmit="return false;">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -373,6 +401,15 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
             <input type="number" step="0.01" id="produtoArea" placeholder="Área Total (m²)" class="input-field">
             <input type="number" step="0.01" id="produtoUnitario" placeholder="Valor Unitário (R$)" class="input-field">
             <input type="number" step="0.01" id="produtoTotal" placeholder="Valor Total (R$)" class="input-field">
+            
+            <!-- CAMPO DE COR -->
+            <div class="flex items-center gap-4">
+              <label for="produtoCor" class="font-medium text-gray-300">Cor:</label>
+              <input type="color" id="produtoCor" value="#ffffff" class="input-field">
+              <input type="text" id="produtoCorNome" placeholder="Nome da Cor (ex: Bronze, Fumê)" class="input-field flex-grow">
+            </div>
+            <!-- FIM CAMPO DE COR -->
+
             <input type="file" accept="image/*" id="produtoFoto" class="input-field">
           </div>
           <div class="flex justify-center gap-6 pt-4">
@@ -411,11 +448,13 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
       const unitario = document.getElementById("produtoUnitario").value;
       const total = document.getElementById("produtoTotal").value;
       const fotoFile = document.getElementById("produtoFoto").files[0];
+      const corHex = document.getElementById("produtoCor").value; // Captura o valor HEX da cor
+      const corNome = document.getElementById("produtoCorNome").value; // Captura o nome da cor
       let fotoDataURL = '';
 
-      // Validação básica dos campos
+      // Validação básica dos campos (ajustada para incluir os novos campos de cor como opcionais)
       if (!nomeProduto || !largura || !altura || !qtd || !vidro || !area || !unitario || !total) {
-        alert("Por favor, preencha todos os campos do produto antes de adicionar.");
+        alert("Por favor, preencha todos os campos obrigatórios do produto antes de adicionar.");
         return;
       }
 
@@ -438,7 +477,9 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
         area: area,
         valorUnitario: unitario,
         valorTotal: total,
-        foto: fotoDataURL
+        foto: fotoDataURL,
+        corHex: corHex, // Adiciona a cor HEX
+        corNome: corNome // Adiciona o nome da cor
       };
 
       // Adiciona o produto ao array
@@ -470,7 +511,9 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
           ${produto.foto ? `<img src="${produto.foto}" alt="${produto.nome}">` : ''}
           <div>
             <p class="font-semibold">${produto.nome} (${produto.largura}x${produto.altura}mm)</p>
-            <p class="text-sm">Qtd: ${produto.quantidade} | Vidro: ${produto.vidro} | Área: ${produto.area}m²</p>
+            <p class="text-sm">Qtd: ${produto.quantidade} | Vidro: ${produto.vidro}
+            ${produto.corNome ? ` | Cor: <span class="color-box" style="background-color: ${produto.corHex};"></span>${produto.corNome}` : ''}
+            | Área: ${produto.area}m²</p>
             <p class="text-md font-bold">Valor Unitário: R$ ${parseFloat(produto.valorUnitario).toFixed(2)} | Valor Total: R$ ${parseFloat(produto.valorTotal).toFixed(2)}</p>
           </div>
           <button type="button" class="text-red-500 hover:text-red-700 ml-auto transition-colors duration-200" onclick="removerProduto(${index})">
@@ -498,6 +541,8 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
       document.getElementById("produtoUnitario").value = '';
       document.getElementById("produtoTotal").value = '';
       document.getElementById("produtoFoto").value = ''; // Limpa o input de arquivo
+      document.getElementById("produtoCor").value = '#ffffff'; // Reseta a cor para branco
+      document.getElementById("produtoCorNome").value = ''; // Limpa o nome da cor
     }
 
     // Função principal para gerar o PDF
@@ -574,10 +619,25 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
         let imageHeight = 0;
         const imageWidth = 30;
 
+        // Informações do produto
+        const productInfoLines = [
+          `Produto: ${produto.nome}`,
+          `Largura x Altura: ${produto.largura} x ${produto.altura} mm`,
+          `Vidro: ${produto.vidro}`,
+          `Área: ${produto.area} m²`,
+          `Quantidade: ${produto.quantidade}`,
+          `Valor Unitário: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`
+        ];
+        
+        // Adiciona a linha de cor separadamente para controlar o posicionamento do quadrado
+        let colorLine = null;
+        if (produto.corNome) {
+            colorLine = `Cor: ${produto.corNome}`;
+        }
+
         if (produto.foto) {
           const img = new Image();
           img.src = produto.foto;
-          // Espera a imagem carregar antes de adicioná-la ao PDF
           await new Promise(resolve => img.onload = resolve); 
 
           imageHeight = (img.height / img.width) * imageWidth;
@@ -586,36 +646,40 @@ Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade
           const textX = 55;
           let textY = currentProductY;
 
-          doc.text(`Produto: ${produto.nome}`, textX, textY);
-          textY += lineSpacing;
-          doc.text(`Largura x Altura: ${produto.largura} x ${produto.altura} mm`, textX, textY);
-          textY += lineSpacing;
-          doc.text(`Vidro: ${produto.vidro}`, textX, textY);
-          textY += lineSpacing;
-          doc.text(`Área: ${produto.area} m²`, textX, textY);
-          textY += lineSpacing;
-          doc.text(`Quantidade: ${produto.quantidade}`, textX, textY);
-          textY += lineSpacing;
-          doc.text(`Valor Unitário: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textX, textY);
-          textY += lineSpacing + 2;
+          productInfoLines.forEach(line => {
+            doc.text(line, textX, textY);
+            textY += lineSpacing;
+          });
+          
+          // Adiciona a linha de cor e o quadrado
+          if (colorLine) {
+            doc.text(colorLine, textX + 7, textY); // Adiciona um pequeno offset para o texto da cor
+            doc.setFillColor(produto.corHex);
+            doc.rect(textX, textY - 4, 5, 5, 'F'); // Quadrado de cor antes do texto
+            textY += lineSpacing;
+          }
+
+          textY += 2; // Espaçamento extra antes do valor total
           doc.setFont(undefined, "bold");
           doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textX, textY);
           doc.setFont(undefined, "normal");
 
           y = Math.max(currentProductY + imageHeight, textY) + 10;
         } else {
-          doc.text(`Produto: ${produto.nome}`, 20, currentProductY);
-          currentProductY += lineSpacing;
-          doc.text(`Largura x Altura: ${produto.largura} x ${produto.altura} mm`, 20, currentProductY);
-          currentProductY += lineSpacing;
-          doc.text(`Vidro: ${produto.vidro}`, 20, currentProductY);
-          currentProductY += lineSpacing;
-          doc.text(`Área: ${produto.area} m²`, 20, currentProductY);
-          currentProductY += lineSpacing;
-          doc.text(`Quantidade: ${produto.quantidade}`, 20, currentProductY);
-          currentProductY += lineSpacing;
-          doc.text(`Valor Unitário: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, 20, currentProductY);
-          currentProductY += lineSpacing + 2;
+          productInfoLines.forEach(line => {
+            doc.text(line, 20, currentProductY);
+            currentProductY += lineSpacing;
+          });
+
+          // Adiciona a linha de cor e o quadrado
+          if (colorLine) {
+            doc.text(colorLine, 20 + 7, currentProductY); // Adiciona um pequeno offset para o texto da cor
+            doc.setFillColor(produto.corHex);
+            doc.rect(20, currentProductY - 4, 5, 5, 'F'); // Quadrado de cor antes do texto
+            currentProductY += lineSpacing;
+          }
+
+          currentProductY += 2; // Espaçamento extra antes do valor total
           doc.setFont(undefined, "bold");
           doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, 20, currentProductY);
           doc.setFont(undefined, "normal");
