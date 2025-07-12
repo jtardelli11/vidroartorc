@@ -1,6 +1,8 @@
-## Código HTML Completo com Todas as Modificações
+Que ótimo que gostou! Com certeza, vamos deixar o verde um pouco mais forte e o efeito de iluminação maior para que ele se estenda por uma área maior da tela.
 
-Aqui está o código HTML completo, incluindo todas as modificações de estilo para o glassmorphism escuro, a paleta de cores preta e verde, o desconto à vista, e os gradientes nas extremidades do site.
+Para isso, ajustaremos os valores de `rgba` para o verde (aumentando a opacidade) e as porcentagens de parada do `linear-gradient` para que o efeito seja mais abrangente.
+
+### **Modificações no Código HTML e CSS:**
 
 ```html
 <!DOCTYPE html>
@@ -11,126 +13,186 @@ Aqui está o código HTML completo, incluindo todas as modificações de estilo 
   <title>VIDRO ART MUZ - Orçamentos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #000000; /* Fundo preto sólido para o corpo */
-      color: #e0e0e0; /* Cor de texto padrão para o corpo */
+      font-family: 'Open Sans', sans-serif; /* Fonte mais suave para o corpo */
+      background-color: #1a1a1a; /* Preto suave */
+      color: #f8f9fa; /* Off-white para o texto padrão */
+      line-height: 1.6;
+      /* Efeito de iluminação verde no topo */
+      /* Aumentado a opacidade do verde (0.3) e a área de transição (30% e 60%) */
+      background-image: linear-gradient(to bottom, rgba(40, 167, 69, 0.3), rgba(40, 167, 69, 0) 30%, #1a1a1a 60%);
+      background-attachment: fixed; /* Para que o gradiente fique fixo no topo da viewport */
+      background-repeat: no-repeat;
+      background-position: top center;
+      background-size: 100% 100vh; /* Ocupa a largura total e a altura da viewport */
     }
+    h1, h2, h3, h4 {
+      font-family: 'Montserrat', sans-serif; /* Montserrat para títulos */
+    }
+
     .glass-card {
-      backdrop-filter: blur(20px); /* Blur intenso */
-      background: rgba(0, 0, 0, 0.6); /* Fundo preto com 60% de opacidade */
-      border-radius: 1rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.1); /* Borda sutil e clara */
-      transition: all 0.3s ease-in-out;
+      backdrop-filter: blur(15px); /* Blur mais sutil */
+      background: rgba(255, 255, 255, 0.08); /* Fundo quase transparente, mais elegante */
+      border-radius: 1.25rem; /* Bordas mais arredondadas */
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Sombra mais pronunciada */
+      transition: all 0.4s ease-in-out;
     }
     .glass-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(-8px) scale(1.01); /* Efeito de "levantar" mais acentuado */
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+      background: rgba(255, 255, 255, 0.12); /* Levemente mais opaco no hover */
     }
+
     .input-field {
       width: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.1); /* Borda sutil */
-      background: rgba(0, 0, 0, 0.5); /* Fundo preto com 50% de opacidade */
-      border-radius: 0.375rem;
-      padding: 0.65rem 0.75rem;
+      background: rgba(0, 0, 0, 0.4); /* Fundo mais transparente */
+      border-radius: 0.5rem; /* Bordas mais arredondadas */
+      padding: 0.75rem 1rem; /* Padding maior */
       outline: none;
-      color: white; /* Letras brancas */
-      transition: border-color 0.3s ease, background 0.3s ease;
+      color: #f8f9fa; /* Off-white */
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      /* Remover borda padrão, usar box-shadow para foco */
+      border: none;
     }
     .input-field::placeholder {
-      color: rgba(255, 255, 255, 0.7); /* Placeholder em branco com opacidade */
+      color: rgba(255, 255, 255, 0.6); /* Placeholder mais suave */
     }
     .input-field:focus {
-      border-color: rgba(255, 255, 255, 0.5); /* Borda mais visível no foco */
-      background: rgba(0, 0, 0, 0.7); /* Fundo um pouco menos transparente no foco */
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.6); /* Fundo um pouco mais escuro no foco */
+      box-shadow: 0 0 0 3px #28a745; /* Sombra verde principal no foco */
     }
-    /* Ajuste para o checkbox */
     .input-field[type="checkbox"] {
         background: rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: #16a34a; /* Cor do check em verde */
+        color: #28a745; /* Verde principal para o check */
+        appearance: none; /* Remover estilo padrão */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 1.25rem; /* Tamanho maior */
+        height: 1.25rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        /* Remover borda padrão, usar box-shadow para foco */
+        border: none;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); /* Borda interna sutil */
     }
+    .input-field[type="checkbox"]:checked {
+        background-color: #28a745; /* Verde principal quando checado */
+        box-shadow: inset 0 0 0 1px #28a745; /* Sombra interna verde */
+    }
+    .input-field[type="checkbox"]:checked::before {
+        content: '\2713'; /* Ícone de check */
+        display: block;
+        color: white;
+        font-size: 0.8rem;
+        text-align: center;
+        line-height: 1.25rem;
+    }
+
     .btn-green {
-      background-color: #16a34a; /* Verde principal */
+      background-color: #28a745; /* Verde principal */
       color: white;
-      padding: 0.65rem 1.5rem;
-      border-radius: 0.375rem;
-      display: flex;
-      gap: 0.5rem;
+      padding: 0.8rem 2rem; /* Padding maior */
+      border-radius: 0.5rem; /* Bordas mais arredondadas */
+      display: inline-flex; /* Usar inline-flex para centralizar ícone e texto */
+      gap: 0.75rem; /* Espaçamento maior */
       align-items: center;
       font-weight: 600;
-      transition: background-color 0.3s ease, transform 0.2s ease;
+      letter-spacing: 0.05em; /* Espaçamento entre letras */
+      text-transform: uppercase; /* Texto em maiúsculas */
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); /* Sombra para o botão */
+      border: none; /* Remover borda */
     }
     .btn-green:hover {
-      background-color: #15803d; /* Verde um pouco mais escuro no hover */
-      transform: translateY(-2px);
+      background-color: #1e7e34; /* Verde escuro no hover */
+      transform: translateY(-3px); /* Efeito de "levantar" */
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
     }
     .btn-black {
-      background-color: #1f2937; /* Um cinza escuro, quase preto */
-      color: white;
-      padding: 0.65rem 1.5rem;
-      border-radius: 0.375rem;
-      display: flex;
-      gap: 0.5rem;
+      background-color: #343a40; /* Cinza escuro */
+      color: #f8f9fa; /* Off-white */
+      padding: 0.8rem 2rem;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      gap: 0.75rem;
       align-items: center;
       font-weight: 600;
-      transition: background-color 0.3s ease, transform 0.2s ease;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(52, 58, 64, 0.4);
+      border: none; /* Remover borda */
     }
     .btn-black:hover {
-      background-color: #000000; /* Preto puro no hover */
-      transform: translateY(-2px);
+      background-color: #1a1a1a; /* Preto suave no hover */
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(52, 58, 64, 0.6);
     }
+
     .product-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.1); /* Borda sutil */
-      background: rgba(0, 0, 0, 0.5); /* Fundo preto com 50% de opacidade */
-      border-radius: 0.5rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      gap: 1.5rem; /* Espaçamento maior */
+      padding: 1.25rem; /* Padding maior */
+      background: rgba(0, 0, 0, 0.3); /* Fundo mais transparente */
+      border-radius: 0.75rem; /* Bordas mais arredondadas */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra mais suave */
       transition: all 0.3s ease-in-out;
+      border: none; /* Remover borda */
     }
     .product-item:hover {
       transform: scale(1.01);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.4);
     }
     .product-item img {
-      width: 70px;
-      height: 70px;
+      width: 80px; /* Tamanho maior */
+      height: 80px;
       object-fit: cover;
-      border-radius: 0.375rem;
-      border: 1px solid rgba(255, 255, 255, 0.2); /* Borda sutil na imagem */
+      border-radius: 0.5rem; /* Bordas mais arredondadas */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Sombra sutil na imagem */
     }
     .product-item p {
-        color: white; /* Cor de texto padrão para itens - branco */
+        color: #f8f9fa; /* Off-white */
     }
     .product-item p.font-semibold {
-        color: white; /* Título do produto em branco */
+        color: #f8f9fa; /* Off-white */
+        font-size: 1.1rem; /* Fonte maior */
     }
     .product-item p.text-sm {
-        color: rgba(255, 255, 255, 0.8); /* Texto menor em branco com opacidade */
+        color: rgba(255, 255, 255, 0.7); /* Texto menor mais suave */
     }
     .product-item p.text-md {
-        color: #a3e635; /* Valor em verde claro para destaque */
+        color: #6cda80; /* Verde claro para destaque */
+        font-weight: 700; /* Mais negrito */
+        font-size: 1.15rem; /* Fonte maior */
+    }
+    .product-item button {
+        color: #dc3545; /* Vermelho para o lixo */
+        font-size: 1.4rem; /* Ícone maior */
+        transition: color 0.2s ease;
+    }
+    .product-item button:hover {
+        color: #c82333; /* Vermelho mais escuro no hover */
     }
 
     /* Animações de entrada */
     .animate-fade-in {
-      animation: fadeIn 0.8s ease-out forwards;
+      animation: fadeIn 1s ease-out forwards;
       opacity: 0;
     }
     .animate-slide-up {
-      animation: slideUp 0.8s ease-out forwards;
+      animation: slideUp 1s ease-out forwards;
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
     }
 
     @keyframes fadeIn {
@@ -138,27 +200,27 @@ Aqui está o código HTML completo, incluindo todas as modificações de estilo 
       to { opacity: 1; }
     }
     @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     /* Ajustes para o fundo da seção de orçamento */
     #orcamento {
-        background-color: #000000; /* Fundo preto sólido */
-        color: white; /* Cor do texto padrão para a seção */
+        background-color: transparent; /* Fundo transparente para ver o gradiente do body */
+        color: #f8f9fa; /* Off-white */
     }
     #orcamento h3 {
-        color: white; /* Título da seção branco */
+        color: #f8f9fa; /* Título da seção off-white */
     }
     #produtosAdicionadosContainer h4 {
-        color: white; /* Título dos produtos adicionados branco */
-        border-color: rgba(255, 255, 255, 0.3); /* Borda transparente */
+        color: #f8f9fa; /* Título dos produtos adicionados off-white */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha divisória sutil */
     }
     #noProductsMessage {
-        color: rgba(255, 255, 255, 0.7); /* Mensagem de nenhum produto */
+        color: rgba(255, 255, 255, 0.6); /* Mensagem de nenhum produto mais suave */
     }
     .flex.items-center.gap-2 label {
-        color: white; /* Label do checkbox branco */
+        color: #f8f9fa; /* Label do checkbox off-white */
     }
     hr {
         border-color: rgba(255, 255, 255, 0.1); /* Linha divisória mais escura e sutil */
@@ -166,37 +228,118 @@ Aqui está o código HTML completo, incluindo todas as modificações de estilo 
 
     /* Ajuste para o cabeçalho */
     header {
-      background-color: #16a34a; /* Verde principal */
+      background-color: transparent; /* Fundo transparente para ver o gradiente do body */
+      padding-top: 1.5rem; /* py-6 */
+      padding-bottom: 1.5rem;
+      box-shadow: none; /* Remover sombra */
+    }
+    header .max-w-7xl { /* Remover max-width e padding laterais do container interno do header */
+        max-width: none;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    header h1, header nav { /* Adicionar padding interno para o texto do header */
+        padding-left: 2rem; /* px-8 */
+        padding-right: 2rem; /* px-8 */
+    }
+    header h1 {
+        font-size: 2.5rem; /* Título maior */
+        font-weight: 700;
+        letter-spacing: 0.08em; /* Mais espaçamento */
+    }
+    header nav a {
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.3rem;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    header nav a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #28a745; /* Verde principal no hover */
     }
 
+
     /* Ajuste para a seção hero */
-    .bg-gradient-to-b.from-green-900.to-black {
-      background: linear-gradient(to bottom, #16a34a, #000000); /* Verde para preto */
+    .hero-section { /* Nova classe para a seção hero */
+      background-color: transparent; /* Fundo transparente para ver o gradiente do body */
+      padding-left: 0; /* Remover padding lateral */
+      padding-right: 0; /* Remover padding lateral */
+      padding-top: 8rem; /* Mais padding */
+      padding-bottom: 8rem; /* Mais padding */
+      box-shadow: none; /* Remover sombra */
     }
+    .hero-section > div { /* Adicionar padding interno para o conteúdo do hero */
+        max-width: 4xl; /* Aumentar o max-width para o conteúdo */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 2rem; /* px-8 */
+        padding-right: 2rem; /* px-8 */
+    }
+    .hero-section h2 {
+        font-size: 3.8rem; /* Título maior */
+        font-weight: 700;
+        line-height: 1.2;
+        text-shadow: none; /* Remover sombra */
+        margin-bottom: 1.5rem;
+    }
+    .hero-section p {
+        font-size: 1.4rem; /* Texto maior */
+        opacity: 0.95;
+        text-shadow: none; /* Remover sombra */
+    }
+
+    /* Ajuste para a seção de orçamento */
+    #orcamento {
+        padding-top: 5rem; /* py-20 */
+        padding-bottom: 5rem;
+        background-color: transparent; /* Fundo transparente para ver o gradiente do body */
+    }
+    #orcamento > div { /* Adicionar padding interno para o conteúdo do orçamento */
+        max-width: 5xl; /* Manter o max-width para o conteúdo */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 2rem; /* px-8 */
+        padding-right: 2rem; /* px-8 */
+    }
+    #orcamento h3 {
+        font-size: 3rem; /* Título maior */
+        font-weight: 700;
+        margin-bottom: 3rem; /* Espaçamento maior */
+        text-shadow: none; /* Remover sombra */
+    }
+
 
     /* Ajuste para o rodapé */
     footer {
-      /* Gradiente de preto para verde */
-      background: linear-gradient(to top, #16a34a, #000000); /* Começa verde, termina preto */
-      color: white;
+      background-color: transparent; /* Fundo transparente para ver o gradiente do body */
+      color: #f8f9fa; /* Off-white */
       text-align: center;
-      padding: 2rem;
-      margin-top: 5rem; /* Espaçamento do conteúdo */
-      box-shadow: none; /* Remover sombra padrão se houver */
+      padding: 2.5rem; /* Padding maior */
+      margin-top: 6rem; /* Espaçamento maior do conteúdo */
+      box-shadow: none; /* Remover sombra */
+      padding-left: 0; /* Remover padding lateral */
+      padding-right: 0; /* Remover padding lateral */
+    }
+    footer p { /* Adicionar padding interno para o texto do rodapé */
+        padding-left: 2rem; /* px-8 */
+        padding-right: 2rem; /* px-8 */
+        font-size: 0.95rem;
+        opacity: 0.8;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-green-50 via-white to-gray-50 min-h-screen">
-  <header class="bg-green-900 text-white py-5">
+<body class="min-h-screen"> 
+  <header class="text-white py-6">
     <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
       <h1 class="text-3xl font-bold tracking-wide">VIDRO ART MUZ</h1>
       <nav class="space-x-6 text-lg">
-        <a href="#orcamento" class="hover:text-green-300 transition-colors duration-300">Orçamento</a>
+        <a href="#orcamento" class="hover:underline">Orçamento</a>
       </nav>
     </div>
   </header>
 
-  <section class="text-center py-20 px-4 bg-gradient-to-b from-green-900 to-black text-white">
+  <section class="text-center py-20 px-4 hero-section text-white">
     <div class="max-w-3xl mx-auto p-8 rounded-2xl animate-fade-in">
       <h2 class="text-5xl font-bold mb-4 leading-tight">Soluções em Vidraçaria com Excelência</h2>
       <p class="text-xl opacity-90">Portas, janelas, box e projetos sob medida para sua casa ou empresa.</p>
@@ -214,7 +357,7 @@ Aqui está o código HTML completo, incluindo todas as modificações de estilo 
             <input type="email" id="clienteEmail" placeholder="E-mail" class="input-field">
             <input type="text" id="clienteEndereco" placeholder="Endereço da Obra" class="input-field">
             <div class="flex items-center gap-2">
-              <input type="checkbox" id="pagamentoAVista" class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+              <input type="checkbox" id="pagamentoAVista" class="input-field">
               <label for="pagamentoAVista" class="font-medium">Pagamento à Vista (3% de desconto)</label>
             </div>
           </div>
@@ -249,7 +392,7 @@ Aqui está o código HTML completo, incluindo todas as modificações de estilo 
     </div>
   </section>
 
-  <footer class="bg-green-900 text-white text-center py-8 mt-20 shadow-inner">
+  <footer class="text-white text-center py-8 mt-20">
     <p class="text-sm">&copy; 2025 VIDRO ART MUZ. Todos os direitos reservados.</p>
   </footer>
 
