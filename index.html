@@ -365,9 +365,32 @@
         font-size: 0.95rem;
         opacity: 0.8;
     }
+
+    /* Estilos para a barra de progresso de rolagem */
+    #progressBarContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px; /* Altura da barra */
+      background-color: rgba(0, 0, 0, 0.2); /* Fundo da barra (transparente) */
+      z-index: 1000; /* Garante que fique acima de outros elementos */
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--main-green); /* Cor da barra de progresso */
+      transition: width 0.1s ease-out; /* Transição suave para a largura */
+    }
   </style>
 </head>
 <body class="min-h-screen"> 
+  <!-- Barra de Progresso de Rolagem -->
+  <div id="progressBarContainer">
+    <div id="progressBar"></div>
+  </div>
+
   <header class="text-white py-6">
     <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
       <h1 class="text-3xl font-bold tracking-wide">VIDRO ART MUZ</h1>
@@ -564,11 +587,11 @@
 
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF("p", "mm", "a4");
-      const margin = 8; // Margem geral ainda mais reduzida
+      const margin = 8; // Margem geral
       let y = margin;
-      const lineSpacing = 3.8; // Espaçamento entre linhas ainda mais reduzido
-      const sectionPadding = 4; // Espaçamento interno das seções ainda mais reduzido
-      const headerColor = '#1E8449'; // Verde principal um pouco mais escuro
+      const lineSpacing = 3.8; // Espaçamento entre linhas
+      const sectionPadding = 4; // Espaçamento interno das seções
+      const headerColor = '#1E8449'; // Verde principal
       const textColor = '#333333'; // Cor de texto padrão
       const lightGray = '#f0f0f0'; // Fundo de seções
       const borderColor = '#cccccc'; // Cor da borda
@@ -594,21 +617,21 @@
 
       // --- Cabeçalho do Documento ---
       doc.setFillColor(headerColor);
-      doc.rect(0, 0, doc.internal.pageSize.width, 22, 'F'); // Faixa verde no topo reduzida
+      doc.rect(0, 0, doc.internal.pageSize.width, 22, 'F');
 
       if (logoImg) {
-        doc.addImage(logoImg, 'PNG', margin, 2, 16, 16); // Ajuste posição e tamanho conforme necessário
+        doc.addImage(logoImg, 'PNG', margin, 2, 16, 16); // Alinhado à esquerda
       } else {
-        // Fallback de texto se o logo não carregar
-        doc.setFontSize(14); // Fonte menor para o fallback
-        doc.setTextColor(255, 255, 255); // Branco
+        doc.setFontSize(14);
+        doc.setTextColor(255, 255, 255);
         doc.setFont(undefined, "bold");
-        doc.text("VIDRO ART MUZ", margin, 13); // Título da empresa
+        doc.text("VIDRO ART MUZ", margin, 13); // Alinhado à esquerda
       }
 
-      doc.setFontSize(8); // Fonte menor para informações de contato
-      doc.setTextColor(255, 255, 255); // Branco
+      doc.setFontSize(8);
+      doc.setTextColor(255, 255, 255);
       doc.setFont(undefined, "normal");
+      // Informações de contato da empresa alinhadas à direita
       doc.text("Avenida Frei Florentino, 214, Centro, Muzambinho", doc.internal.pageSize.width - margin, 4, { align: "right" });
       doc.text("CNPJ: 00.000.000/0001-00", doc.internal.pageSize.width - margin, 8, { align: "right" });
       doc.text("Telefone: (35)3571-5750", doc.internal.pageSize.width - margin, 12, { align: "right" });
@@ -618,85 +641,81 @@
 
       // --- Título "ORÇAMENTO" Centralizado e Estilizado ---
       const titleText = "ORÇAMENTO";
-      const titleFontSize = 20; // Aumentar um pouco a fonte
+      const titleFontSize = 20;
       doc.setFontSize(titleFontSize);
       doc.setTextColor(headerColor);
       doc.setFont(undefined, "bold");
 
-      // Calcular a largura do texto para centralizar
       const textWidth = doc.getStringUnitWidth(titleText) * titleFontSize / doc.internal.scaleFactor;
       const centerX = (doc.internal.pageSize.width - textWidth) / 2;
 
-      // Desenhar um retângulo de fundo para o título
-      const titleRectHeight = 9; // Altura do retângulo
-      const titleRectWidth = textWidth + 8; // Largura do retângulo um pouco maior que o texto
+      const titleRectHeight = 9;
+      const titleRectWidth = textWidth + 8;
       const titleRectX = (doc.internal.pageSize.width - titleRectWidth) / 2;
-      const titleRectY = y - 2; // Posição Y do retângulo, um pouco acima do texto
+      const titleRectY = y - 2;
 
-      doc.setFillColor(lightGray); // Fundo cinza claro para o título
+      doc.setFillColor(lightGray);
       doc.rect(titleRectX, titleRectY, titleRectWidth, titleRectHeight, 'F');
-      doc.setDrawColor(headerColor); // Borda verde
+      doc.setDrawColor(headerColor);
       doc.setLineWidth(0.5);
       doc.rect(titleRectX, titleRectY, titleRectWidth, titleRectHeight, 'S');
 
-      doc.setTextColor(headerColor); // Cor do texto do título
-      doc.text(titleText, centerX, y + 4); // Ajustar Y para centralizar verticalmente no retângulo
-      y += titleRectHeight + 4; // Espaçamento após o título estilizado
+      doc.setTextColor(headerColor);
+      doc.text(titleText, centerX, y + 4); // Centralizado
+      y += titleRectHeight + 4;
       doc.setDrawColor(headerColor);
       doc.setLineWidth(0.4);
-      doc.line(margin, y, doc.internal.pageSize.width - margin, y); // Linha divisória
-      y += 5; // Espaçamento reduzido
+      doc.line(margin, y, doc.internal.pageSize.width - margin, y);
+      y += 5;
 
       // --- Dados do Cliente ---
       doc.setFillColor(lightGray);
-      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 32, 'F'); // Aumentado para incluir data e número
+      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 32, 'F');
       doc.setDrawColor(borderColor);
-      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 32, 'S'); // Borda
+      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 32, 'S');
 
-      doc.setFontSize(9); // Fonte menor
+      doc.setFontSize(9);
       doc.setTextColor(headerColor);
       doc.setFont(undefined, "bold");
-      doc.text("DADOS DO CLIENTE", margin + sectionPadding, y + sectionPadding);
+      doc.text("DADOS DO CLIENTE", margin + sectionPadding, y + sectionPadding); // Alinhado à esquerda
 
-      doc.setFontSize(8); // Fonte menor
+      doc.setFontSize(8);
       doc.setTextColor(textColor);
       doc.setFont(undefined, "normal");
-      doc.text(`Nome: ${document.getElementById("clienteNome").value}`, margin + sectionPadding, y + sectionPadding + 4);
-      doc.text(`Telefone: ${document.getElementById("clienteTelefone").value}`, margin + sectionPadding, y + sectionPadding + 8);
-      doc.text(`E-mail: ${document.getElementById("clienteEmail").value}`, margin + sectionPadding, y + sectionPadding + 12);
-      doc.text(`Endereço da Obra: ${document.getElementById("clienteEndereco").value}`, margin + sectionPadding, y + sectionPadding + 16);
+      doc.text(`Nome: ${document.getElementById("clienteNome").value}`, margin + sectionPadding, y + sectionPadding + 4); // Alinhado à esquerda
+      doc.text(`Telefone: ${document.getElementById("clienteTelefone").value}`, margin + sectionPadding, y + sectionPadding + 8); // Alinhado à esquerda
+      doc.text(`E-mail: ${document.getElementById("clienteEmail").value}`, margin + sectionPadding, y + sectionPadding + 12); // Alinhado à esquerda
+      doc.text(`Endereço da Obra: ${document.getElementById("clienteEndereco").value}`, margin + sectionPadding, y + sectionPadding + 16); // Alinhado à esquerda
       
       // --- Data e Número do Orçamento ---
-      const hoje = new Date();
-      const dataOrcamento = hoje.toLocaleDateString('pt-BR');
-      const numeroOrcamento = Math.floor(Math.random() * 1000000); // Gera um número aleatório simples
+      const dataAtual = new Date();
+      const dataOrcamento = dataAtual.toLocaleDateString('pt-BR');
+      const numeroOrcamento = `ORC-${dataAtual.getFullYear()}${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}${dataAtual.getDate().toString().padStart(2, '0')}-${Math.floor(Math.random() * 9000) + 1000}`; 
 
-      doc.text(`Data: ${dataOrcamento}`, margin + sectionPadding, y + sectionPadding + 20);
-      doc.text(`Orçamento Nº: ${numeroOrcamento}`, margin + sectionPadding, y + sectionPadding + 24);
+      doc.text(`Data: ${dataOrcamento}`, margin + sectionPadding, y + sectionPadding + 20); // Alinhado à esquerda
+      doc.text(`Orçamento Nº: ${numeroOrcamento}`, margin + sectionPadding, y + sectionPadding + 24); // Alinhado à esquerda
 
-      y += 32 + 5; // Atualiza Y, espaçamento ajustado
+      y += 32 + 5;
 
       // --- Seção de Produtos ---
       doc.setFillColor(headerColor);
-      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 5, 'F'); // Altura reduzida
-      doc.setFontSize(9); // Fonte menor
+      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 5, 'F');
+      doc.setFontSize(9);
       doc.setTextColor(255, 255, 255);
       doc.setFont(undefined, "bold");
-      doc.text("PRODUTOS", margin + sectionPadding, y + 3.5); // Ajuste de posição
-      y += 8; // Espaçamento reduzido
+      doc.text("PRODUTOS", margin + sectionPadding, y + 3.5); // Alinhado à esquerda
+      y += 8;
 
       let totalGeralOrcamento = 0;
 
-      // Altura fixa para cada item de produto para garantir 3 por página.
-      const productItemFixedHeight = 47; // Mantido em 47mm
+      const productItemFixedHeight = 47;
 
       for (let i = 0; i < produtosAdicionados.length; i++) {
         const produto = produtosAdicionados[i];
 
-        // Verifica se há espaço suficiente para o próximo produto
-        if (y + productItemFixedHeight + 5 > doc.internal.pageSize.height - margin - 45) { // -45 para o rodapé
+        if (y + productItemFixedHeight + 5 > doc.internal.pageSize.height - margin - 45) {
             doc.addPage();
-            y = margin; // Reinicia Y na nova página
+            y = margin;
 
             // Repete o cabeçalho da página
             doc.setFillColor(headerColor);
@@ -732,7 +751,7 @@
             doc.setLineWidth(0.5);
             doc.rect(titleRectXPage2, y - 2, titleRectWidthPage2, titleRectHeight, 'S');
             doc.setTextColor(headerColor);
-            doc.text("ORÇAMENTO (continuação)", centerXPage2, y + 4);
+            doc.text("ORÇAMENTO (continuação)", centerXPage2, y + 4); // Centralizado
             y += titleRectHeight + 4;
             doc.setDrawColor(headerColor);
             doc.setLineWidth(0.4);
@@ -744,7 +763,7 @@
             doc.setFontSize(9);
             doc.setTextColor(255, 255, 255);
             doc.setFont(undefined, "bold");
-            doc.text("PRODUTOS (continuação)", margin + sectionPadding, y + 3.5);
+            doc.text("PRODUTOS (continuação)", margin + sectionPadding, y + 3.5); // Alinhado à esquerda
             y += 8;
         }
 
@@ -752,16 +771,16 @@
         const productItemStart = y;
         doc.setDrawColor(borderColor);
         doc.setLineWidth(0.2);
-        doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, productItemFixedHeight - 2, 'S'); // Usar altura fixa
+        doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, productItemFixedHeight - 2, 'S');
 
-        doc.setFontSize(7.5); // Fonte menor para detalhes do produto
+        doc.setFontSize(7.5);
         doc.setTextColor(textColor);
         doc.setFont(undefined, "normal");
 
         let currentProductY = y + sectionPadding / 2;
         const textStartX = margin + sectionPadding;
         const imageStartX = margin + sectionPadding;
-        const imageSize = 40; // Tamanho da imagem no PDF AINDA MAIOR
+        const imageSize = 40;
 
         if (produto.foto) {
           const img = new Image();
@@ -770,128 +789,148 @@
 
           doc.addImage(img, "JPEG", imageStartX, currentProductY, imageSize, imageSize);
           
-          // Posição do texto ao lado da imagem
-          let textOffset = imageSize + 3; // Espaço da imagem + um pequeno gap
-          let tempTextY = currentProductY + 2; // Ajuste para alinhar com o topo da imagem
+          let textOffset = imageSize + 3;
+          let tempTextY = currentProductY + 2;
 
           doc.setFont(undefined, "bold");
-          doc.text(`${i + 1}. ${produto.nome}`, textStartX + textOffset, tempTextY);
+          doc.text(`${i + 1}. ${produto.nome}`, textStartX + textOffset, tempTextY); // Alinhado com o texto
           doc.setFont(undefined, "normal");
           tempTextY += lineSpacing;
-          doc.text(`L x A: ${produto.largura}x${produto.altura}mm | Vidro: ${produto.vidro}`, textStartX + textOffset, tempTextY);
+          doc.text(`L x A: ${produto.largura}x${produto.altura}mm | Vidro: ${produto.vidro}`, textStartX + textOffset, tempTextY); // Alinhado com o texto
           tempTextY += lineSpacing;
           if (produto.corNome) {
             doc.setFillColor(produto.corHex);
-            doc.rect(textStartX + textOffset, tempTextY - 3.5, 3, 3, 'F'); // Quadrado de cor menor
-            doc.text(`Cor: ${produto.corNome}`, textStartX + textOffset + 5, tempTextY);
+            doc.rect(textStartX + textOffset, tempTextY - 3.5, 3, 3, 'F');
+            doc.text(`Cor: ${produto.corNome}`, textStartX + textOffset + 5, tempTextY); // Alinhado com o texto
             tempTextY += lineSpacing;
           }
-          // Combinando Qtd, Área e V. Unitário em uma linha para economizar espaço
-          doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX + textOffset, tempTextY);
+          doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX + textOffset, tempTextY); // Alinhado com o texto
           tempTextY += lineSpacing + 1;
           doc.setFont(undefined, "bold");
-          doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textStartX + textOffset, tempTextY);
+          doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textStartX + textOffset, tempTextY); // Alinhado com o texto
           doc.setFont(undefined, "normal");
 
-          y = productItemStart + productItemFixedHeight; // Atualiza Y para o próximo item
+          y = productItemStart + productItemFixedHeight;
         } else {
-          // Texto do produto sem imagem
-          let tempTextY = currentProductY + 2; // Ajuste para alinhar com o topo da caixa
+          let tempTextY = currentProductY + 2;
 
           doc.setFont(undefined, "bold");
-          doc.text(`${i + 1}. ${produto.nome}`, textStartX, tempTextY);
+          doc.text(`${i + 1}. ${produto.nome}`, textStartX, tempTextY); // Alinhado à esquerda
           doc.setFont(undefined, "normal");
           tempTextY += lineSpacing;
-          doc.text(`L x A: ${produto.largura}x${produto.altura}mm | Vidro: ${produto.vidro}`, textStartX, tempTextY);
+          doc.text(`L x A: ${produto.largura}x${produto.altura}mm | Vidro: ${produto.vidro}`, textStartX, tempTextY); // Alinhado à esquerda
           tempTextY += lineSpacing;
           if (produto.corNome) {
             doc.setFillColor(produto.corHex);
-            doc.rect(textStartX, tempTextY - 3.5, 3, 3, 'F'); // Quadrado de cor menor
-            doc.text(`Cor: ${produto.corNome}`, textStartX + 5, tempTextY);
+            doc.rect(textStartX, tempTextY - 3.5, 3, 3, 'F');
+            doc.text(`Cor: ${produto.corNome}`, textStartX + 5, tempTextY); // Alinhado à esquerda
             tempTextY += lineSpacing;
           }
-          // Combinando Qtd, Área e V. Unitário em uma linha para economizar espaço
-          doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX, tempTextY);
+          doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX, tempTextY); // Alinhado à esquerda
           tempTextY += lineSpacing + 1;
           doc.setFont(undefined, "bold");
-          doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textStartX, tempTextY);
+          doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textStartX, tempTextY); // Alinhado à esquerda
           doc.setFont(undefined, "normal");
 
-          y = productItemStart + productItemFixedHeight; // Atualiza Y para o próximo item
+          y = productItemStart + productItemFixedHeight;
         }
         totalGeralOrcamento += parseFloat(produto.valorTotal);
-        y += 2; // Espaçamento entre os itens reduzido
+        y += 2;
       }
 
       // --- Resumo do Orçamento ---
-      y += 5; // Espaçamento antes do resumo reduzido
+      y += 5;
       doc.setDrawColor(borderColor);
-      doc.setLineWidth(0.4); // Linha mais fina
-      doc.line(doc.internal.pageSize.width - margin - 60, y, doc.internal.pageSize.width - margin, y); // Linha acima do subtotal
+      doc.setLineWidth(0.4);
+      // Linha acima do subtotal alinhada à direita
+      doc.line(doc.internal.pageSize.width - margin - 60, y, doc.internal.pageSize.width - margin, y);
 
-      doc.setFontSize(8.5); // Fonte menor
+      doc.setFontSize(8.5);
       doc.setTextColor(textColor);
       doc.setFont(undefined, "normal");
+      // Subtotal alinhado à direita
       doc.text(`SUBTOTAL:`, doc.internal.pageSize.width - margin - 55, y + lineSpacing, { align: "left" });
       doc.text(`R$ ${totalGeralOrcamento.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
       y += lineSpacing;
 
       const isPagamentoAVista = document.getElementById("pagamentoAVista").checked;
-      const percentualDesconto = 0.03; // 3%
+      const percentualDesconto = 0.03;
       let valorDesconto = 0;
       let valorFinalComDesconto = totalGeralOrcamento;
 
       if (isPagamentoAVista) {
           valorDesconto = totalGeralOrcamento * percentualDesconto;
           valorFinalComDesconto = totalGeralOrcamento - valorDesconto;
+          // Desconto alinhado à direita
           doc.text(`DESCONTO (3% à vista):`, doc.internal.pageSize.width - margin - 55, y + lineSpacing, { align: "left" });
           doc.text(`- R$ ${valorDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
           y += lineSpacing;
       }
 
       doc.setDrawColor(headerColor);
-      doc.setLineWidth(0.7); // Linha mais grossa
-      doc.line(doc.internal.pageSize.width - margin - 60, y + lineSpacing / 2, doc.internal.pageSize.width - margin, y + lineSpacing / 2); // Linha mais grossa
+      doc.setLineWidth(0.7);
+      // Linha mais grossa alinhada à direita
+      doc.line(doc.internal.pageSize.width - margin - 60, y + lineSpacing / 2, doc.internal.pageSize.width - margin, y + lineSpacing / 2);
 
-      doc.setFontSize(10.5); // Fonte maior para o valor final
+      doc.setFontSize(10.5);
       doc.setTextColor(headerColor);
       doc.setFont(undefined, "bold");
+      // Valor Final alinhado à direita
       doc.text(`VALOR FINAL:`, doc.internal.pageSize.width - margin - 55, y + lineSpacing + 3, { align: "left" });
       doc.text(`R$ ${valorFinalComDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing + 3, { align: "right" });
       y += lineSpacing + 5;
 
-      // --- Formas de Pagamento ---
+      // --- Formas de Pagamento (Movido para cá) ---
       doc.setFontSize(8.5);
       doc.setTextColor(headerColor);
       doc.setFont(undefined, "bold");
-      doc.text("FORMAS DE PAGAMENTO:", margin, y);
+      doc.text("FORMAS DE PAGAMENTO:", margin, y); // Alinhado à esquerda
       doc.setFont(undefined, "normal");
       doc.setTextColor(textColor);
-      doc.text("Cartão de Crédito/Débito, Pix, Boleto, Cheque", margin, y + lineSpacing);
+      doc.text("Cartão de Crédito/Débito, Pix, Boleto, Cheque", margin, y + lineSpacing); // Alinhado à esquerda
       y += lineSpacing * 2; // Espaçamento após as formas de pagamento
 
       // --- Rodapé para Assinaturas ---
-      // Ajuste a posição Y para que as linhas de assinatura fiquem mais acima
-      y = doc.internal.pageSize.height - margin - 20; // Posição fixa mais acima do final da página
+      y = doc.internal.pageSize.height - margin - 20;
 
       doc.setDrawColor(borderColor);
-      doc.setLineWidth(0.4); // Linha mais fina
-      doc.line(margin + 10, y, margin + 70, y); // Linha para assinatura do cliente
-      doc.line(doc.internal.pageSize.width - margin - 70, y, doc.internal.pageSize.width - margin - 10, y); // Linha para assinatura da empresa
+      doc.setLineWidth(0.4);
+      // Linhas de assinatura alinhadas para dar espaço
+      doc.line(margin + 10, y, margin + 70, y); // Linha para assinatura do cliente (esquerda)
+      doc.line(doc.internal.pageSize.width - margin - 70, y, doc.internal.pageSize.width - margin - 10, y); // Linha para assinatura da empresa (direita)
 
-      doc.setFontSize(7); // Fonte menor
+      doc.setFontSize(7);
       doc.setTextColor(textColor);
-      doc.text("Assinatura do Cliente", margin + 20, y + 3);
-      doc.text("Assinatura da VIDRO ART MUZ", doc.internal.pageSize.width - margin - 60, y + 3);
+      doc.text("Assinatura do Cliente", margin + 20, y + 3); // Texto alinhado com a linha do cliente
+      doc.text("Assinatura da VIDRO ART MUZ", doc.internal.pageSize.width - margin - 60, y + 3); // Texto alinhado com a linha da empresa
 
-      // Número da página (se houver mais de uma página, isso precisaria ser dinâmico)
-      doc.setFontSize(6.5); // Fonte menor
+      doc.setFontSize(6.5);
       doc.setTextColor(150);
-      doc.text(`Página 1 de 1`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 6, { align: "center" });
+      doc.text(`Página 1 de 1`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 6, { align: "center" }); // Centralizado
 
 
       window.open(doc.output("bloburl"), "_blank");
     }
+
+    // --- JavaScript para a barra de progresso de rolagem ---
+    window.addEventListener('scroll', updateProgressBar);
+    window.addEventListener('resize', updateProgressBar); // Atualiza em caso de redimensionamento
+
+    function updateProgressBar() {
+      const progressBar = document.getElementById('progressBar');
+      const totalHeight = document.body.scrollHeight - window.innerHeight;
+      const scrollPosition = window.scrollY;
+
+      if (totalHeight > 0) { // Evita divisão por zero se a página não tiver rolagem
+        const progress = (scrollPosition / totalHeight) * 100;
+        progressBar.style.width = progress + '%';
+      } else {
+        progressBar.style.width = '100%'; // Se não houver rolagem, a barra fica cheia
+      }
+    }
+
+    // Chama a função uma vez ao carregar a página para definir o estado inicial
+    document.addEventListener('DOMContentLoaded', updateProgressBar);
   </script>
 </body>
 </html>
