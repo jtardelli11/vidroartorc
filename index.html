@@ -1,3 +1,15 @@
+Com certeza! Vamos adicionar a **Data do Orçamento**, o **Número do Orçamento** (gerado automaticamente) e as **Formas de Pagamento Aceitas** ao PDF.
+
+Para manter tudo em uma única página e com boa legibilidade, faremos os seguintes ajustes:
+
+1.  **Data e Número do Orçamento:** Serão adicionados na seção de "Dados do Cliente" ou logo abaixo do título principal, de forma compacta.
+2.  **Formas de Pagamento:** Serão incluídas no resumo, antes das informações de assinatura, de forma clara e concisa.
+
+---
+
+### **Modificações no Código HTML e JavaScript:**
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,13 +23,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
+    /* Definindo as novas cores */
+    :root {
+      --main-green: #1E8449; /* Verde principal um pouco mais escuro */
+      --dark-bg: #1a1a1a;
+      --light-text: #f8f9fa;
+      --light-gray: #f0f0f0;
+      --border-color: #cccccc;
+      --text-color: #333333;
+    }
+
     body {
       font-family: 'Open Sans', sans-serif; /* Fonte mais suave para o corpo */
-      background-color: #1a1a1a; /* Preto suave */
-      color: #f8f9fa; /* Off-white para o texto padrão */
+      background-color: var(--dark-bg); /* Preto suave */
+      color: var(--light-text); /* Off-white para o texto padrão */
       line-height: 1.6;
-      /* Efeito de iluminação verde no topo */
-      background-image: linear-gradient(to bottom, rgba(40, 167, 69, 0.3), rgba(40, 167, 69, 0) 30%, #1a1a1a 60%);
+      /* Efeito de iluminação verde no topo, ajustado para o novo tom */
+      background-image: linear-gradient(to bottom, rgba(30, 132, 73, 0.3), rgba(30, 132, 73, 0) 30%, var(--dark-bg) 60%);
       background-attachment: fixed; /* Para que o gradiente fique fixo no topo da viewport */
       background-repeat: no-repeat;
       background-position: top center;
@@ -46,7 +68,7 @@
       border-radius: 0.5rem; /* Bordas mais arredondadas */
       padding: 0.75rem 1rem; /* Padding maior */
       outline: none;
-      color: #f8f9fa; /* Off-white */
+      color: var(--light-text); /* Off-white */
       transition: background 0.3s ease, box-shadow 0.3s ease;
       border: none;
     }
@@ -55,11 +77,11 @@
     }
     .input-field:focus {
       background: rgba(0, 0, 0, 0.6); /* Fundo um pouco mais escuro no foco */
-      box-shadow: 0 0 0 3px #28a745; /* Sombra verde principal no foco */
+      box-shadow: 0 0 0 3px var(--main-green); /* Sombra verde principal no foco */
     }
     .input-field[type="checkbox"] {
         background: rgba(0, 0, 0, 0.5);
-        color: #28a745; /* Verde principal para o check */
+        color: var(--main-green); /* Verde principal para o check */
         appearance: none; /* Remover estilo padrão */
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -74,8 +96,8 @@
         box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); /* Borda interna sutil */
     }
     .input-field[type="checkbox"]:checked {
-        background-color: #28a745; /* Verde principal quando checado */
-        box-shadow: inset 0 0 0 1px #28a745; /* Sombra interna verde */
+        background-color: var(--main-green); /* Verde principal quando checado */
+        box-shadow: inset 0 0 0 1px var(--main-green); /* Sombra interna verde */
     }
     .input-field[type="checkbox"]:checked::before {
         content: '\2713'; /* Ícone de check */
@@ -104,19 +126,19 @@
     }
     .input-field[type="color"]::-webkit-color-swatch {
       border: none;
-      border-radius: 0.5rem; /* Bordas arredondadas */
+      border-radius: 0.5rem;
     }
     .input-field[type="color"]::-moz-color-swatch-wrapper {
       padding: 0;
     }
     .input-field[type="color"]::-moz-color-swatch {
       border: none;
-      border-radius: 0.5rem; /* Bordas arredondadas */
+      border-radius: 0.5rem;
     }
 
 
     .btn-green {
-      background-color: #28a745; /* Verde principal */
+      background-color: var(--main-green); /* Verde principal */
       color: white;
       padding: 0.8rem 2rem; /* Padding maior */
       border-radius: 0.5rem; /* Bordas mais arredondadas */
@@ -127,17 +149,17 @@
       letter-spacing: 0.05em; /* Espaçamento entre letras */
       text-transform: uppercase; /* Texto em maiúsculas */
       transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); /* Sombra para o botão */
+      box-shadow: 0 4px 15px rgba(30, 132, 73, 0.4); /* Ajustado para o novo verde */
       border: none; /* Remover borda */
     }
     .btn-green:hover {
-      background-color: #1e7e34; /* Verde escuro no hover */
+      background-color: #186F3E; /* Verde escuro no hover */
       transform: translateY(-3px); /* Efeito de "levantar" */
-      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+      box-shadow: 0 6px 20px rgba(30, 132, 73, 0.6);
     }
     .btn-black {
       background-color: #343a40; /* Cinza escuro */
-      color: #f8f9fa; /* Off-white */
+      color: var(--light-text); /* Off-white */
       padding: 0.8rem 2rem;
       border-radius: 0.5rem;
       display: inline-flex;
@@ -151,7 +173,7 @@
       border: none; /* Remover borda */
     }
     .btn-black:hover {
-      background-color: #1a1a1a; /* Preto suave no hover */
+      background-color: var(--dark-bg); /* Preto suave no hover */
       transform: translateY(-3px);
       box-shadow: 0 6px 20px rgba(52, 58, 64, 0.6);
     }
@@ -180,17 +202,17 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Sombra sutil na imagem */
     }
     .product-item p {
-        color: #f8f9fa; /* Off-white */
+        color: var(--light-text); /* Off-white */
     }
     .product-item p.font-semibold {
-        color: #f8f9fa; /* Off-white */
+        color: var(--light-text); /* Off-white */
         font-size: 1.1rem; /* Fonte maior */
     }
     .product-item p.text-sm {
         color: rgba(255, 255, 255, 0.7); /* Texto menor mais suave */
     }
     .product-item p.text-md {
-        color: #6cda80; /* Verde claro para destaque */
+        color: #6cda80; /* Manter um verde claro para destaque de valor */
         font-weight: 700; /* Mais negrito */
         font-size: 1.15rem; /* Fonte maior */
     }
@@ -235,20 +257,20 @@
     /* Ajustes para o fundo da seção de orçamento */
     #orcamento {
         background-color: transparent; /* Fundo transparente para ver o gradiente do body */
-        color: #f8f9fa; /* Off-white */
+        color: var(--light-text); /* Off-white */
     }
     #orcamento h3 {
-        color: #f8f9fa; /* Título da seção off-white */
+        color: var(--light-text); /* Título da seção off-white */
     }
     #produtosAdicionadosContainer h4 {
-        color: #f8f9fa; /* Título dos produtos adicionados off-white */
+        color: var(--light-text); /* Título dos produtos adicionados off-white */
         border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha divisória sutil */
     }
     #noProductsMessage {
         color: rgba(255, 255, 255, 0.6); /* Mensagem de nenhum produto mais suave */
     }
     .flex.items-center.gap-2 label {
-        color: #f8f9fa; /* Label do checkbox off-white */
+        color: var(--light-text); /* Label do checkbox off-white */
     }
     hr {
         border-color: rgba(255, 255, 255, 0.1); /* Linha divisória mais escura e sutil */
@@ -284,7 +306,7 @@
     }
     header nav a:hover {
         background-color: rgba(255, 255, 255, 0.1);
-        color: #28a745; /* Verde principal no hover */
+        color: var(--main-green); /* Verde principal no hover */
     }
 
 
@@ -293,26 +315,26 @@
       background-color: transparent; /* Fundo transparente para ver o gradiente do body */
       padding-left: 0; /* Remover padding lateral */
       padding-right: 0; /* Remover padding lateral */
-      padding-top: 8rem; /* Mais padding */
-      padding-bottom: 8rem; /* Mais padding */
+      padding-top: 8rem; /* Más padding */
+      padding-bottom: 8rem; /* Más padding */
       box-shadow: none; /* Remover sombra */
     }
     .hero-section > div { /* Adicionar padding interno para o conteúdo do hero */
-        max-width: 4xl; /* Aumentar o max-width para o conteúdo */
+        max-width: 4xl; /* Aumentar o max-width para el contenido */
         margin-left: auto;
         margin-right: auto;
         padding-left: 2rem; /* px-8 */
         padding-right: 2rem; /* px-8 */
     }
     .hero-section h2 {
-        font-size: 3.8rem; /* Título maior */
+        font-size: 3.8rem; /* Título mayor */
         font-weight: 700;
         line-height: 1.2;
         text-shadow: none; /* Remover sombra */
         margin-bottom: 1.5rem;
     }
     .hero-section p {
-        font-size: 1.4rem; /* Texto maior */
+        font-size: 1.4rem; /* Texto mayor */
         opacity: 0.95;
         text-shadow: none; /* Remover sombra */
     }
@@ -324,16 +346,16 @@
         background-color: transparent; /* Fundo transparente para ver o gradiente do body */
     }
     #orcamento > div { /* Adicionar padding interno para o conteúdo do orçamento */
-        max-width: 5xl; /* Manter o max-width para o conteúdo */
+        max-width: 5xl; /* Manter o max-width para el contenido */
         margin-left: auto;
         margin-right: auto;
         padding-left: 2rem; /* px-8 */
         padding-right: 2rem; /* px-8 */
     }
     #orcamento h3 {
-        font-size: 3rem; /* Título maior */
+        font-size: 3rem; /* Título mayor */
         font-weight: 700;
-        margin-bottom: 3rem; /* Espaçamento maior */
+        margin-bottom: 3rem; /* Espaçamento mayor */
         text-shadow: none; /* Remover sombra */
     }
 
@@ -341,10 +363,10 @@
     /* Ajuste para o rodapé */
     footer {
       background-color: transparent; /* Fundo transparente para ver o gradiente do body */
-      color: #f8f9fa; /* Off-white */
+      color: var(--light-text); /* Off-white */
       text-align: center;
-      padding: 2.5rem; /* Padding maior */
-      margin-top: 6rem; /* Espaçamento maior do conteúdo */
+      padding: 2.5rem; /* Padding mayor */
+      margin-top: 6rem; /* Espaçamento mayor do conteúdo */
       box-shadow: none; /* Remover sombra */
       padding-left: 0; /* Remover padding lateral */
       padding-right: 0; /* Remover padding lateral */
@@ -370,7 +392,7 @@
   <section class="text-center py-20 px-4 hero-section text-white">
     <div class="max-w-3xl mx-auto p-8 rounded-2xl animate-fade-in">
       <h2 class="text-5xl font-bold mb-4 leading-tight">A Referência em Soluções de Vidro para Residências e Empresas</h2>
-      <p class="text-xl opacity-90">Portas, janelas, box e projetos sob medida para sua casa ou empresa.</p>
+      <p class="text-xl opacity:90">Portas, janelas, box e projetos sob medida para sua casa ou empresa.</p>
     </div>
   </section>
 
@@ -554,195 +576,331 @@
 
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF("p", "mm", "a4");
-      let y = 20;
-      const lineSpacing = 6; // Espaçamento padrão entre as linhas de texto
+      const margin = 8; // Margem geral ainda mais reduzida
+      let y = margin;
+      const lineSpacing = 3.8; // Espaçamento entre linhas ainda mais reduzido
+      const sectionPadding = 4; // Espaçamento interno das seções ainda mais reduzido
+      const headerColor = '#1E8449'; // Verde principal um pouco mais escuro
+      const textColor = '#333333'; // Cor de texto padrão
+      const lightGray = '#f0f0f0'; // Fundo de seções
+      const borderColor = '#cccccc'; // Cor da borda
 
-      // Logo e cabeçalho da empresa
-      doc.setFontSize(12);
-      doc.setFont(undefined, "bold");
-      doc.text("VIDRO ART MUZ", 20, y);
-      doc.setFontSize(10);
+      // URL do logo (SUBSTITUA PELA URL DIRETA DO SEU LOGO)
+      const logoUrl = 'https://image.prntscr.com/image/GGaFu3YNs5gE.png'; 
+      let logoImg = null;
+
+      if (logoUrl) {
+        try {
+          const response = await fetch(logoUrl);
+          const blob = await response.blob();
+          logoImg = await new Promise(resolve => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(blob);
+          });
+        } catch (error) {
+          console.error("Erro ao carregar o logo:", error);
+          // Opcional: alertar o usuário ou usar um fallback de texto
+        }
+      }
+
+      // --- Cabeçalho do Documento ---
+      doc.setFillColor(headerColor);
+      doc.rect(0, 0, doc.internal.pageSize.width, 22, 'F'); // Faixa verde no topo reduzida
+
+      if (logoImg) {
+        doc.addImage(logoImg, 'PNG', margin, 2, 16, 16); // Ajuste posição e tamanho conforme necessário
+      } else {
+        // Fallback de texto se o logo não carregar
+        doc.setFontSize(14); // Fonte menor para o fallback
+        doc.setTextColor(255, 255, 255); // Branco
+        doc.setFont(undefined, "bold");
+        doc.text("VIDRO ART MUZ", margin, 13); // Título da empresa
+      }
+
+      doc.setFontSize(8); // Fonte menor para informações de contato
+      doc.setTextColor(255, 255, 255); // Branco
       doc.setFont(undefined, "normal");
-      doc.text("Endereço: Avenida Frei Florentino, 214, Centro, Muzambinho", 20, y += lineSpacing);
-      doc.text("CNPJ: 00.000.000/0001-00", 20, y += lineSpacing);
-      doc.text("Telefone: (35)3571-5750", 20, y += lineSpacing);
-      doc.text("Email: vidroartmuz@gmail.com", 20, y += lineSpacing);
-      y += 10;
+      doc.text("Avenida Frei Florentino, 214, Centro, Muzambinho", doc.internal.pageSize.width - margin, 4, { align: "right" });
+      doc.text("CNPJ: 00.000.000/0001-00", doc.internal.pageSize.width - margin, 8, { align: "right" });
+      doc.text("Telefone: (35)3571-5750", doc.internal.pageSize.width - margin, 12, { align: "right" });
+      doc.text("Email: vidroartmuz@gmail.com", doc.internal.pageSize.width - margin, 16, { align: "right" });
 
-      // Dados do cliente
-      doc.setFontSize(11);
+      y = 27; // Posição inicial após o cabeçalho
+
+      // --- Título "ORÇAMENTO" Centralizado e Estilizado ---
+      const titleText = "ORÇAMENTO";
+      const titleFontSize = 20; // Aumentar um pouco a fonte
+      doc.setFontSize(titleFontSize);
+      doc.setTextColor(headerColor);
       doc.setFont(undefined, "bold");
-      doc.text("DADOS DO CLIENTE", 20, y);
-      doc.setFont(undefined, "normal");
-      y += lineSpacing;
-      doc.text(`Nome: ${document.getElementById("clienteNome").value}`, 20, y);
-      doc.text(`Telefone: ${document.getElementById("clienteTelefone").value}`, 20, y += lineSpacing);
-      doc.text(`E-mail: ${document.getElementById("clienteEmail").value}`, 20, y += lineSpacing);
-      doc.text(`Endereço da Obra: ${document.getElementById("clienteEndereco").value}`, 20, y += lineSpacing);
-      y += 10;
 
-      // Título produtos
-      doc.setFillColor(16, 163, 74);
-      doc.setTextColor(255);
-      doc.rect(20, y, 170, 8, "F");
-      doc.text("PRODUTOS", 105, y + 5, { align: "center" });
-      y += 14;
-      doc.setTextColor(0);
+      // Calcular a largura do texto para centralizar
+      const textWidth = doc.getStringUnitWidth(titleText) * titleFontSize / doc.internal.scaleFactor;
+      const centerX = (doc.internal.pageSize.width - textWidth) / 2;
+
+      // Desenhar um retângulo de fundo para o título
+      const titleRectHeight = 9; // Altura do retângulo
+      const titleRectWidth = textWidth + 8; // Largura do retângulo um pouco maior que o texto
+      const titleRectX = (doc.internal.pageSize.width - titleRectWidth) / 2;
+      const titleRectY = y - 2; // Posição Y do retângulo, um pouco acima do texto
+
+      doc.setFillColor(lightGray); // Fundo cinza claro para o título
+      doc.rect(titleRectX, titleRectY, titleRectWidth, titleRectHeight, 'F');
+      doc.setDrawColor(headerColor); // Borda verde
+      doc.setLineWidth(0.5);
+      doc.rect(titleRectX, titleRectY, titleRectWidth, titleRectHeight, 'S');
+
+      doc.setTextColor(headerColor); // Cor do texto do título
+      doc.text(titleText, centerX, y + 4); // Ajustar Y para centralizar verticalmente no retângulo
+      y += titleRectHeight + 4; // Espaçamento após o título estilizado
+      doc.setDrawColor(headerColor);
+      doc.setLineWidth(0.4);
+      doc.line(margin, y, doc.internal.pageSize.width - margin, y); // Linha divisória
+      y += 5; // Espaçamento reduzido
+
+      // --- Dados do Cliente ---
+      doc.setFillColor(lightGray);
+      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 32, 'F'); // Aumentado para incluir data e número
+      doc.setDrawColor(borderColor);
+      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 32, 'S'); // Borda
+
+      doc.setFontSize(9); // Fonte menor
+      doc.setTextColor(headerColor);
+      doc.setFont(undefined, "bold");
+      doc.text("DADOS DO CLIENTE", margin + sectionPadding, y + sectionPadding);
+
+      doc.setFontSize(8); // Fonte menor
+      doc.setTextColor(textColor);
+      doc.setFont(undefined, "normal");
+      doc.text(`Nome: ${document.getElementById("clienteNome").value}`, margin + sectionPadding, y + sectionPadding + 4);
+      doc.text(`Telefone: ${document.getElementById("clienteTelefone").value}`, margin + sectionPadding, y + sectionPadding + 8);
+      doc.text(`E-mail: ${document.getElementById("clienteEmail").value}`, margin + sectionPadding, y + sectionPadding + 12);
+      doc.text(`Endereço da Obra: ${document.getElementById("clienteEndereco").value}`, margin + sectionPadding, y + sectionPadding + 16);
+      
+      // --- Data e Número do Orçamento ---
+      const hoje = new Date();
+      const dataOrcamento = hoje.toLocaleDateString('pt-BR');
+      const numeroOrcamento = Math.floor(Math.random() * 1000000); // Gera um número aleatório simples
+
+      doc.text(`Data: ${dataOrcamento}`, margin + sectionPadding, y + sectionPadding + 20);
+      doc.text(`Orçamento Nº: ${numeroOrcamento}`, margin + sectionPadding, y + sectionPadding + 24);
+
+      y += 32 + 5; // Atualiza Y, espaçamento ajustado
+
+      // --- Seção de Produtos ---
+      doc.setFillColor(headerColor);
+      doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 5, 'F'); // Altura reduzida
+      doc.setFontSize(9); // Fonte menor
+      doc.setTextColor(255, 255, 255);
+      doc.setFont(undefined, "bold");
+      doc.text("PRODUTOS", margin + sectionPadding, y + 3.5); // Ajuste de posição
+      y += 8; // Espaçamento reduzido
 
       let totalGeralOrcamento = 0;
 
-      // Loop para adicionar cada produto
+      // Altura fixa para cada item de produto para garantir 3 por página.
+      const productItemFixedHeight = 47; // Mantido em 47mm
+
       for (let i = 0; i < produtosAdicionados.length; i++) {
         const produto = produtosAdicionados[i];
 
         // Verifica se há espaço suficiente para o próximo produto
-        // Estimativa de altura para um produto (imagem + texto + espaçamento)
-        const estimatedProductHeight = 50; // Ajuste conforme necessário
-        if (y + estimatedProductHeight > doc.internal.pageSize.height - 30) { // -30 para margem inferior
+        if (y + productItemFixedHeight + 5 > doc.internal.pageSize.height - margin - 45) { // -45 para o rodapé
             doc.addPage();
-            y = 20; // Reinicia Y na nova página
-            // Redesenha o título de produtos na nova página se necessário
-            doc.setFillColor(16, 163, 74);
-            doc.setTextColor(255);
-            doc.rect(20, y, 170, 8, "F");
-            doc.text("PRODUTOS (continuação)", 105, y + 5, { align: "center" });
-            y += 14;
-            doc.setTextColor(0);
+            y = margin; // Reinicia Y na nova página
+
+            // Repete o cabeçalho da página
+            doc.setFillColor(headerColor);
+            doc.rect(0, 0, doc.internal.pageSize.width, 22, 'F');
+            if (logoImg) {
+                doc.addImage(logoImg, 'PNG', margin, 2, 16, 16);
+            } else {
+                doc.setFontSize(14);
+                doc.setTextColor(255, 255, 255);
+                doc.setFont(undefined, "bold");
+                doc.text("VIDRO ART MUZ", margin, 13);
+            }
+            doc.setFontSize(8);
+            doc.setTextColor(255, 255, 255);
+            doc.setFont(undefined, "normal");
+            doc.text("Avenida Frei Florentino, 214, Centro, Muzambinho", doc.internal.pageSize.width - margin, 4, { align: "right" });
+            doc.text("CNPJ: 00.000.000/0001-00", doc.internal.pageSize.width - margin, 8, { align: "right" });
+            doc.text("Telefone: (35)3571-5750", doc.internal.pageSize.width - margin, 12, { align: "right" });
+            doc.text("Email: vidroartmuz@gmail.com", doc.internal.pageSize.width - margin, 16, { align: "right" });
+            y = 27;
+
+            // Repete o título "ORÇAMENTO" estilizado na nova página
+            doc.setFontSize(titleFontSize);
+            doc.setTextColor(headerColor);
+            doc.setFont(undefined, "bold");
+            const textWidthPage2 = doc.getStringUnitWidth("ORÇAMENTO (continuação)") * titleFontSize / doc.internal.scaleFactor;
+            const centerXPage2 = (doc.internal.pageSize.width - textWidthPage2) / 2;
+            const titleRectWidthPage2 = textWidthPage2 + 8;
+            const titleRectXPage2 = (doc.internal.pageSize.width - titleRectWidthPage2) / 2;
+            doc.setFillColor(lightGray);
+            doc.rect(titleRectXPage2, y - 2, titleRectWidthPage2, titleRectHeight, 'F');
+            doc.setDrawColor(headerColor);
+            doc.setLineWidth(0.5);
+            doc.rect(titleRectXPage2, y - 2, titleRectWidthPage2, titleRectHeight, 'S');
+            doc.setTextColor(headerColor);
+            doc.text("ORÇAMENTO (continuação)", centerXPage2, y + 4);
+            y += titleRectHeight + 4;
+            doc.setDrawColor(headerColor);
+            doc.setLineWidth(0.4);
+            doc.line(margin, y, doc.internal.pageSize.width - margin, y);
+            y += 5;
+
+            doc.setFillColor(headerColor);
+            doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, 5, 'F');
+            doc.setFontSize(9);
+            doc.setTextColor(255, 255, 255);
+            doc.setFont(undefined, "bold");
+            doc.text("PRODUTOS (continuação)", margin + sectionPadding, y + 3.5);
+            y += 8;
         }
 
-        doc.setFont(undefined, "bold");
-        doc.text(`ITEM ${i + 1}`, 20, y);
+        // Desenha a borda do item do produto
+        const productItemStart = y;
+        doc.setDrawColor(borderColor);
+        doc.setLineWidth(0.2);
+        doc.rect(margin, y, doc.internal.pageSize.width - 2 * margin, productItemFixedHeight - 2, 'S'); // Usar altura fixa
+
+        doc.setFontSize(7.5); // Fonte menor para detalhes do produto
+        doc.setTextColor(textColor);
         doc.setFont(undefined, "normal");
 
-        const initialProductY = y + lineSpacing;
-        let currentProductY = initialProductY;
-        let imageHeight = 0;
-        const imageWidth = 30;
-
-        // Informações do produto
-        const productInfoLines = [
-          `Produto: ${produto.nome}`,
-          `Largura x Altura: ${produto.largura} x ${produto.altura} mm`,
-          `Vidro: ${produto.vidro}`,
-          `Área: ${produto.area} m²`,
-          `Quantidade: ${produto.quantidade}`,
-          `Valor Unitário: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`
-        ];
-        
-        // Adiciona a linha de cor separadamente para controlar o posicionamento do quadrado
-        let colorLine = null;
-        if (produto.corNome) {
-            colorLine = `Cor: ${produto.corNome}`;
-        }
+        let currentProductY = y + sectionPadding / 2;
+        const textStartX = margin + sectionPadding;
+        const imageStartX = margin + sectionPadding;
+        const imageSize = 40; // Tamanho da imagem no PDF AINDA MAIOR
 
         if (produto.foto) {
           const img = new Image();
           img.src = produto.foto;
           await new Promise(resolve => img.onload = resolve); 
 
-          imageHeight = (img.height / img.width) * imageWidth;
-          doc.addImage(img, "JPEG", 20, currentProductY, imageWidth, imageHeight);
-
-          const textX = 55;
-          let textY = currentProductY;
-
-          productInfoLines.forEach(line => {
-            doc.text(line, textX, textY);
-            textY += lineSpacing;
-          });
+          doc.addImage(img, "JPEG", imageStartX, currentProductY, imageSize, imageSize);
           
-          // Adiciona a linha de cor e o quadrado
-          if (colorLine) {
-            doc.text(colorLine, textX + 7, textY); // Adiciona um pequeno offset para o texto da cor
-            doc.setFillColor(produto.corHex);
-            doc.rect(textX, textY - 4, 5, 5, 'F'); // Quadrado de cor antes do texto
-            textY += lineSpacing;
-          }
+          // Posição do texto ao lado da imagem
+          let textOffset = imageSize + 3; // Espaço da imagem + um pequeno gap
+          let tempTextY = currentProductY + 2; // Ajuste para alinhar com o topo da imagem
 
-          textY += 2; // Espaçamento extra antes do valor total
           doc.setFont(undefined, "bold");
-          doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textX, textY);
+          doc.text(`${i + 1}. ${produto.nome}`, textStartX + textOffset, tempTextY);
+          doc.setFont(undefined, "normal");
+          tempTextY += lineSpacing;
+          doc.text(`L x A: ${produto.largura}x${produto.altura}mm | Vidro: ${produto.vidro}`, textStartX + textOffset, tempTextY);
+          tempTextY += lineSpacing;
+          if (produto.corNome) {
+            doc.setFillColor(produto.corHex);
+            doc.rect(textStartX + textOffset, tempTextY - 3.5, 3, 3, 'F'); // Quadrado de cor menor
+            doc.text(`Cor: ${produto.corNome}`, textStartX + textOffset + 5, tempTextY);
+            tempTextY += lineSpacing;
+          }
+          // Combinando Qtd, Área e V. Unitário em uma linha para economizar espaço
+          doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX + textOffset, tempTextY);
+          tempTextY += lineSpacing + 1;
+          doc.setFont(undefined, "bold");
+          doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textStartX + textOffset, tempTextY);
           doc.setFont(undefined, "normal");
 
-          y = Math.max(currentProductY + imageHeight, textY) + 10;
+          y = productItemStart + productItemFixedHeight; // Atualiza Y para o próximo item
         } else {
-          productInfoLines.forEach(line => {
-            doc.text(line, 20, currentProductY);
-            currentProductY += lineSpacing;
-          });
+          // Texto do produto sem imagem
+          let tempTextY = currentProductY + 2; // Ajuste para alinhar com o topo da caixa
 
-          // Adiciona a linha de cor e o quadrado
-          if (colorLine) {
-            doc.text(colorLine, 20 + 7, currentProductY); // Adiciona um pequeno offset para o texto da cor
-            doc.setFillColor(produto.corHex);
-            doc.rect(20, currentProductY - 4, 5, 5, 'F'); // Quadrado de cor antes do texto
-            currentProductY += lineSpacing;
-          }
-
-          currentProductY += 2; // Espaçamento extra antes do valor total
           doc.setFont(undefined, "bold");
-          doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, 20, currentProductY);
+          doc.text(`${i + 1}. ${produto.nome}`, textStartX, tempTextY);
+          doc.setFont(undefined, "normal");
+          tempTextY += lineSpacing;
+          doc.text(`L x A: ${produto.largura}x${produto.altura}mm | Vidro: ${produto.vidro}`, textStartX, tempTextY);
+          tempTextY += lineSpacing;
+          if (produto.corNome) {
+            doc.setFillColor(produto.corHex);
+            doc.rect(textStartX, tempTextY - 3.5, 3, 3, 'F'); // Quadrado de cor menor
+            doc.text(`Cor: ${produto.corNome}`, textStartX + 5, tempTextY);
+            tempTextY += lineSpacing;
+          }
+          // Combinando Qtd, Área e V. Unitário em uma linha para economizar espaço
+          doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX, tempTextY);
+          tempTextY += lineSpacing + 1;
+          doc.setFont(undefined, "bold");
+          doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textStartX, tempTextY);
           doc.setFont(undefined, "normal");
 
-          y = currentProductY + 10;
+          y = productItemStart + productItemFixedHeight; // Atualiza Y para o próximo item
         }
         totalGeralOrcamento += parseFloat(produto.valorTotal);
+        y += 2; // Espaçamento entre os itens reduzido
       }
 
-      // --- INÍCIO DA MODIFICAÇÃO PARA O DESCONTO ---
+      // --- Resumo do Orçamento ---
+      y += 5; // Espaçamento antes do resumo reduzido
+      doc.setDrawColor(borderColor);
+      doc.setLineWidth(0.4); // Linha mais fina
+      doc.line(doc.internal.pageSize.width - margin - 60, y, doc.internal.pageSize.width - margin, y); // Linha acima do subtotal
+
+      doc.setFontSize(8.5); // Fonte menor
+      doc.setTextColor(textColor);
+      doc.setFont(undefined, "normal");
+      doc.text(`SUBTOTAL:`, doc.internal.pageSize.width - margin - 55, y + lineSpacing, { align: "left" });
+      doc.text(`R$ ${totalGeralOrcamento.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
+      y += lineSpacing;
+
       const isPagamentoAVista = document.getElementById("pagamentoAVista").checked;
       const percentualDesconto = 0.03; // 3%
-
       let valorDesconto = 0;
       let valorFinalComDesconto = totalGeralOrcamento;
 
       if (isPagamentoAVista) {
           valorDesconto = totalGeralOrcamento * percentualDesconto;
           valorFinalComDesconto = totalGeralOrcamento - valorDesconto;
+          doc.text(`DESCONTO (3% à vista):`, doc.internal.pageSize.width - margin - 55, y + lineSpacing, { align: "left" });
+          doc.text(`- R$ ${valorDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
+          y += lineSpacing;
       }
 
-      // Adicionar rodapé
-      // Verifica se há espaço suficiente para o rodapé, se não, adiciona uma nova página
-      if (y + 70 > doc.internal.pageSize.height) { // Aumentei o espaço para o rodapé para acomodar o desconto
-          doc.addPage();
-          y = 20; // Reinicia a posição Y na nova página
-      }
+      doc.setDrawColor(headerColor);
+      doc.setLineWidth(0.7); // Linha mais grossa
+      doc.line(doc.internal.pageSize.width - margin - 60, y + lineSpacing / 2, doc.internal.pageSize.width - margin, y + lineSpacing / 2); // Linha mais grossa
 
-      doc.setFont(undefined, "normal");
-      const hoje = new Date();
-      const entrega = new Date();
-      entrega.setDate(hoje.getDate() + 10);
-
-      doc.setFontSize(10);
-      doc.text("PREVISÃO DE ENTREGA:", 20, y);
-      doc.text(entrega.toLocaleDateString(), 70, y);
-      doc.text("ORÇAMENTO VÁLIDO ATÉ:", 110, y);
-      doc.text(new Date(hoje.getTime() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString(), 180, y, { align: "right" });
-
-      y += 10;
-      doc.setFontSize(11);
+      doc.setFontSize(10.5); // Fonte maior para o valor final
+      doc.setTextColor(headerColor);
       doc.setFont(undefined, "bold");
-      doc.text(`SUBTOTAL: R$ ${totalGeralOrcamento.toFixed(2)}`, 20, y); // Mostrar o subtotal
+      doc.text(`VALOR FINAL:`, doc.internal.pageSize.width - margin - 55, y + lineSpacing + 3, { align: "left" });
+      doc.text(`R$ ${valorFinalComDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing + 3, { align: "right" });
+      y += lineSpacing + 5;
 
-      if (isPagamentoAVista) {
-          y += lineSpacing;
-          doc.setFont(undefined, "normal");
-          doc.text(`DESCONTO (3% à vista): - R$ ${valorDesconto.toFixed(2)}`, 20, y);
-          y += lineSpacing;
-          doc.setFont(undefined, "bold");
-          doc.text(`VALOR FINAL (À VISTA): R$ ${valorFinalComDesconto.toFixed(2)}`, 20, y);
-      } else {
-          y += lineSpacing; // Manter o espaçamento mesmo sem desconto
-          doc.text(`VALOR FINAL: R$ ${totalGeralOrcamento.toFixed(2)}`, 20, y);
-      }
-      // --- FIM DA MODIFICAÇÃO PARA O DESCONTO ---
-
-      y += 20;
-      doc.line(20, y, 190, y);
-      doc.setFontSize(10);
+      // --- Formas de Pagamento ---
+      doc.setFontSize(8.5);
+      doc.setTextColor(headerColor);
+      doc.setFont(undefined, "bold");
+      doc.text("FORMAS DE PAGAMENTO:", margin, y);
       doc.setFont(undefined, "normal");
-      doc.text("CLIENTE", 20, y + 5);
-      doc.text("MODELO", 160, y + 5);
+      doc.setTextColor(textColor);
+      doc.text("Cartão de Crédito/Débito, Pix, Boleto, Cheque", margin, y + lineSpacing);
+      y += lineSpacing * 2; // Espaçamento após as formas de pagamento
+
+      // --- Rodapé para Assinaturas ---
+      // Ajuste a posição Y para que as linhas de assinatura fiquem mais acima
+      y = doc.internal.pageSize.height - margin - 20; // Posição fixa mais acima do final da página
+
+      doc.setDrawColor(borderColor);
+      doc.setLineWidth(0.4); // Linha mais fina
+      doc.line(margin + 10, y, margin + 70, y); // Linha para assinatura do cliente
+      doc.line(doc.internal.pageSize.width - margin - 70, y, doc.internal.pageSize.width - margin - 10, y); // Linha para assinatura da empresa
+
+      doc.setFontSize(7); // Fonte menor
+      doc.setTextColor(textColor);
+      doc.text("Assinatura do Cliente", margin + 20, y + 3);
+      doc.text("Assinatura da VIDRO ART MUZ", doc.internal.pageSize.width - margin - 60, y + 3);
+
+      // Número da página (se houver mais de uma página, isso precisaria ser dinâmico)
+      doc.setFontSize(6.5); // Fonte menor
+      doc.setTextColor(150);
+      doc.text(`Página 1 de 1`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 6, { align: "center" });
+
 
       window.open(doc.output("bloburl"), "_blank");
     }
