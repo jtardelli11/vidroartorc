@@ -1,3 +1,11 @@
+Com certeza! Para atender às suas solicitações, farei as seguintes modificações no arquivo `Site.html`:
+
+*   **Remover o campo "Valor Total (R$)"** do formulário de adição de produtos.
+*   **Tornar o campo "Área Total (m²)" opcional**, removendo a validação que o tornava obrigatório.
+
+Aqui está o código `Site.html` atualizado com essas alterações:
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -431,9 +439,8 @@
             </div>
             <input type="number" id="produtoQtd" placeholder="Quantidade" value="1" class="input-field">
             <input type="text" id="produtoVidro" placeholder="Vidro (ex: temperado, fumê, etc.)" class="input-field">
-            <input type="number" step="0.01" id="produtoArea" placeholder="Área Total (m²)" class="input-field">
+            <input type="number" step="0.01" id="produtoArea" placeholder="Área Total (m²) (Opcional)" class="input-field">
             <input type="number" step="0.01" id="produtoUnitario" placeholder="Valor Unitário (R$)" class="input-field">
-            <input type="number" step="0.01" id="produtoTotal" placeholder="Valor Total (R$)" class="input-field">
             
             <!-- CAMPO DE COR -->
             <div class="flex items-center gap-4">
@@ -477,17 +484,18 @@
       const altura = document.getElementById("produtoAltura").value;
       const qtd = document.getElementById("produtoQtd").value;
       const vidro = document.getElementById("produtoVidro").value;
-      const area = document.getElementById("produtoArea").value;
+      const area = document.getElementById("produtoArea").value; // Área agora é opcional
       const unitario = document.getElementById("produtoUnitario").value;
-      const total = document.getElementById("produtoTotal").value;
+      // O campo 'total' foi removido do formulário, mas ainda é calculado para o PDF
+      const total = parseFloat(unitario) * parseFloat(qtd); 
       const fotoFile = document.getElementById("produtoFoto").files[0];
       const corHex = document.getElementById("produtoCor").value; // Captura o valor HEX da cor
       const corNome = document.getElementById("produtoCorNome").value; // Captura o nome da cor
       let fotoDataURL = '';
 
-      // Validação básica dos campos (ajustada para incluir os novos campos de cor como opcionais)
-      if (!nomeProduto || !largura || !altura || !qtd || !vidro || !area || !unitario || !total) {
-        alert("Por favor, preencha todos os campos obrigatórios do produto antes de adicionar.");
+      // Validação básica dos campos (Área Total não é mais obrigatória)
+      if (!nomeProduto || !largura || !altura || !qtd || !vidro || !unitario) {
+        alert("Por favor, preencha todos os campos obrigatórios do produto (exceto Área Total) antes de adicionar.");
         return;
       }
 
@@ -507,9 +515,9 @@
         altura: altura,
         quantidade: qtd,
         vidro: vidro,
-        area: area,
+        area: area, // Área pode ser vazia
         valorUnitario: unitario,
-        valorTotal: total,
+        valorTotal: total, // Valor total é calculado aqui
         foto: fotoDataURL,
         corHex: corHex, // Adiciona a cor HEX
         corNome: corNome // Adiciona o nome da cor
@@ -546,7 +554,8 @@
             <p class="font-semibold">${produto.nome} (${produto.largura}x${produto.altura}mm)</p>
             <p class="text-sm">Qtd: ${produto.quantidade} | Vidro: ${produto.vidro}
             ${produto.corNome ? ` | Cor: <span class="color-box" style="background-color: ${produto.corHex};"></span>${produto.corNome}` : ''}
-            | Área: ${produto.area}m²</p>
+            ${produto.area ? ` | Área: ${produto.area}m²` : ''}
+            </p>
             <p class="text-md font-bold">Valor Unitário: R$ ${parseFloat(produto.valorUnitario).toFixed(2)} | Valor Total: R$ ${parseFloat(produto.valorTotal).toFixed(2)}</p>
           </div>
           <button type="button" class="text-red-500 hover:text-red-700 ml-auto transition-colors duration-200" onclick="removerProduto(${index})">
@@ -570,9 +579,9 @@
       document.getElementById("produtoAltura").value = '';
       document.getElementById("produtoQtd").value = '1';
       document.getElementById("produtoVidro").value = '';
-      document.getElementById("produtoArea").value = '';
+      document.getElementById("produtoArea").value = ''; // Limpa o campo de área
       document.getElementById("produtoUnitario").value = '';
-      document.getElementById("produtoTotal").value = '';
+      // document.getElementById("produtoTotal").value = ''; // Este campo foi removido
       document.getElementById("produtoFoto").value = ''; // Limpa o input de arquivo
       document.getElementById("produtoCor").value = '#ffffff'; // Reseta a cor para branco
       document.getElementById("produtoCorNome").value = ''; // Limpa o nome da cor
@@ -804,7 +813,12 @@
             doc.text(`Cor: ${produto.corNome}`, textStartX + textOffset + 5, tempTextY); // Alinhado com o texto
             tempTextY += lineSpacing;
           }
-          doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX + textOffset, tempTextY); // Alinhado com o texto
+          // Adiciona a área apenas se ela tiver um valor
+          if (produto.area) {
+            doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX + textOffset, tempTextY); // Alinhado com o texto
+          } else {
+            doc.text(`Qtd: ${produto.quantidade} | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX + textOffset, tempTextY); // Alinhado com o texto
+          }
           tempTextY += lineSpacing + 1;
           doc.setFont(undefined, "bold");
           doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textStartX + textOffset, tempTextY); // Alinhado com o texto
@@ -826,7 +840,12 @@
             doc.text(`Cor: ${produto.corNome}`, textStartX + 5, tempTextY); // Alinhado à esquerda
             tempTextY += lineSpacing;
           }
-          doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX, tempTextY); // Alinhado à esquerda
+          // Adiciona a área apenas se ela tiver um valor
+          if (produto.area) {
+            doc.text(`Qtd: ${produto.quantidade} | Área: ${produto.area}m² | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX, tempTextY); // Alinhado à esquerda
+          } else {
+            doc.text(`Qtd: ${produto.quantidade} | V. Unit: R$ ${parseFloat(produto.valorUnitario).toFixed(2)}`, textStartX, tempTextY); // Alinhado à esquerda
+          }
           tempTextY += lineSpacing + 1;
           doc.setFont(undefined, "bold");
           doc.text(`VALOR TOTAL: R$ ${parseFloat(produto.valorTotal).toFixed(2)}`, textStartX, tempTextY); // Alinhado à esquerda
