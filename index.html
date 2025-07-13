@@ -124,7 +124,6 @@
       border-radius: 0.5rem;
     }
 
-
     .btn-green {
       background-color: var(--main-green); /* Verde principal */
       color: white;
@@ -145,9 +144,10 @@
       transform: translateY(-3px); /* Efeito de "levantar" */
       box-shadow: 0 6px 20px rgba(30, 132, 73, 0.6);
     }
+    /* Estilo para o botão preto */
     .btn-black {
-      background-color: #343a40; /* Cinza escuro */
-      color: var(--light-text); /* Off-white */
+      background-color: #343a40; /* Cor preta suave */
+      color: white;
       padding: 0.8rem 2rem;
       border-radius: 0.5rem;
       display: inline-flex;
@@ -158,7 +158,7 @@
       text-transform: uppercase;
       transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
       box-shadow: 0 4px 15px rgba(52, 58, 64, 0.4);
-      border: none; /* Remover borda */
+      border: none;
     }
     .btn-black:hover {
       background-color: var(--dark-bg); /* Preto suave no hover */
@@ -204,13 +204,30 @@
         font-weight: 700; /* Mais negrito */
         font-size: 1.15rem; /* Fonte maior */
     }
+    .product-item .action-buttons {
+        display: flex;
+        gap: 0.75rem; /* Espaçamento entre os botões de ação */
+        margin-left: auto; /* Empurra os botões para a direita */
+    }
     .product-item button {
-        color: #dc3545; /* Vermelho para o lixo */
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
         font-size: 1.4rem; /* Ícone maior */
         transition: color 0.2s ease;
     }
-    .product-item button:hover {
+    .product-item button.delete-btn {
+        color: #dc3545; /* Vermelho para o lixo */
+    }
+    .product-item button.delete-btn:hover {
         color: #c82333; /* Vermelho mais escuro no hover */
+    }
+    .product-item button.edit-btn {
+        color: #007bff; /* Azul para o editar */
+    }
+    .product-item button.edit-btn:hover {
+        color: #0056b3; /* Azul mais escuro no hover */
     }
     .product-item .color-box {
       width: 20px;
@@ -297,7 +314,6 @@
         color: var(--main-green); /* Verde principal no hover */
     }
 
-
     /* Ajuste para a seção hero */
     .hero-section { /* Nova classe para a seção hero */
       background-color: transparent; /* Fundo transparente para ver o gradiente do body */
@@ -346,7 +362,6 @@
         margin-bottom: 3rem; /* Espaçamento mayor */
         text-shadow: none; /* Remover sombra */
     }
-
 
     /* Ajuste para o rodapé */
     footer {
@@ -445,7 +460,8 @@
             <input type="file" accept="image/*" id="produtoFoto" class="input-field">
           </div>
           <div class="flex justify-center gap-6 pt-4">
-            <button type="button" class="btn-green" onclick="adicionarProduto()"><i class="fas fa-plus mr-2"></i> Adicionar Produto</button>
+            <button type="button" class="btn-green" id="adicionarProdutoBtn" onclick="adicionarProduto()"><i class="fas fa-plus mr-2"></i> Adicionar Produto</button>
+            <button type="button" class="btn-green hidden" id="salvarEdicaoBtn" onclick="salvarEdicaoProduto()"><i class="fas fa-save mr-2"></i> Salvar Edição</button>
             <button type="button" class="btn-black" onclick="gerarPDF()"><i class="fas fa-file-pdf mr-2"></i> Gerar Orçamento</button>
           </div>
         </form>
@@ -468,6 +484,7 @@
   <script>
     // Array para armazenar os produtos adicionados
     let produtosAdicionados = [];
+    let produtoEmEdicaoIndex = -1; // Variável para controlar qual produto está sendo editado
 
     // Função para adicionar um produto à lista
     async function adicionarProduto() {
@@ -478,8 +495,6 @@
       const vidro = document.getElementById("produtoVidro").value;
       const area = document.getElementById("produtoArea").value; // Área agora é opcional
       const unitario = document.getElementById("produtoUnitario").value;
-      // O campo 'total' foi removido do formulário, mas ainda é calculado para o PDF
-      const total = parseFloat(unitario) * parseFloat(qtd); 
       const fotoFile = document.getElementById("produtoFoto").files[0];
       const corHex = document.getElementById("produtoCor").value; // Captura o valor HEX da cor
       const corNome = document.getElementById("produtoCorNome").value; // Captura o nome da cor
@@ -499,6 +514,9 @@
           reader.readAsDataURL(fotoFile);
         });
       }
+
+      // Calcula o valor total
+      const total = parseFloat(unitario) * parseFloat(qtd); 
 
       // Cria o objeto do novo produto
       const novoProduto = {
@@ -550,9 +568,14 @@
             </p>
             <p class="text-md font-bold">Valor Unitário: R$ ${parseFloat(produto.valorUnitario).toFixed(2)} | Valor Total: R$ ${parseFloat(produto.valorTotal).toFixed(2)}</p>
           </div>
-          <button type="button" class="text-red-500 hover:text-red-700 ml-auto transition-colors duration-200" onclick="removerProduto(${index})">
-            <i class="fas fa-trash-alt text-lg"></i>
-          </button>
+          <div class="action-buttons">
+            <button type="button" class="edit-btn" onclick="editarProduto(${index})">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button type="button" class="delete-btn" onclick="removerProduto(${index})">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
         `;
         listaProdutosDiv.appendChild(productItemDiv);
       });
@@ -560,8 +583,104 @@
 
     // Função para remover um produto da lista
     function removerProduto(index) {
-      produtosAdicionados.splice(index, 1); // Remove o produto do array
-      renderizarProdutosAdicionados(); // Renderiza a lista novamente
+      if (confirm("Tem certeza que deseja remover este produto?")) {
+        produtosAdicionados.splice(index, 1); // Remove o produto do array
+        renderizarProdutosAdicionados(); // Renderiza a lista novamente
+        // Se o produto removido era o que estava em edição, reseta o estado de edição
+        if (produtoEmEdicaoIndex === index) {
+          limparCamposProduto();
+          document.getElementById("adicionarProdutoBtn").classList.remove("hidden");
+          document.getElementById("salvarEdicaoBtn").classList.add("hidden");
+          produtoEmEdicaoIndex = -1;
+        }
+      }
+    }
+
+    // Função para editar um produto
+    function editarProduto(index) {
+      const produto = produtosAdicionados[index];
+      
+      // Preenche os campos do formulário com os dados do produto
+      document.getElementById("produtoNome").value = produto.nome;
+      document.getElementById("produtoLargura").value = produto.largura;
+      document.getElementById("produtoAltura").value = produto.altura;
+      document.getElementById("produtoQtd").value = produto.quantidade;
+      document.getElementById("produtoVidro").value = produto.vidro;
+      document.getElementById("produtoArea").value = produto.area;
+      document.getElementById("produtoUnitario").value = produto.valorUnitario;
+      document.getElementById("produtoCor").value = produto.corHex;
+      document.getElementById("produtoCorNome").value = produto.corNome;
+      // Não é possível preencher o input de arquivo por segurança, o usuário terá que selecionar novamente se quiser mudar a foto.
+      document.getElementById("produtoFoto").value = ''; 
+
+      // Esconde o botão "Adicionar Produto" e mostra o botão "Salvar Edição"
+      document.getElementById("adicionarProdutoBtn").classList.add("hidden");
+      document.getElementById("salvarEdicaoBtn").classList.remove("hidden");
+
+      // Armazena o índice do produto que está sendo editado
+      produtoEmEdicaoIndex = index;
+
+      // Rola a página para o formulário de edição
+      document.getElementById("orcamento").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Função para salvar a edição de um produto
+    async function salvarEdicaoProduto() {
+      if (produtoEmEdicaoIndex === -1) {
+        alert("Nenhum produto selecionado para edição.");
+        return;
+      }
+
+      const nomeProduto = document.getElementById("produtoNome").value;
+      const largura = document.getElementById("produtoLargura").value;
+      const altura = document.getElementById("produtoAltura").value;
+      const qtd = document.getElementById("produtoQtd").value;
+      const vidro = document.getElementById("produtoVidro").value;
+      const area = document.getElementById("produtoArea").value;
+      const unitario = document.getElementById("produtoUnitario").value;
+      const fotoFile = document.getElementById("produtoFoto").files[0];
+      const corHex = document.getElementById("produtoCor").value;
+      const corNome = document.getElementById("produtoCorNome").value;
+      let fotoDataURL = produtosAdicionados[produtoEmEdicaoIndex].foto; // Mantém a foto existente se nenhuma nova for selecionada
+
+      if (!nomeProduto || !largura || !altura || !qtd || !vidro || !unitario) {
+        alert("Por favor, preencha todos os campos obrigatórios do produto (exceto Área Total) antes de salvar a edição.");
+        return;
+      }
+
+      if (fotoFile) {
+        fotoDataURL = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(fotoFile);
+        });
+      }
+
+      const total = parseFloat(unitario) * parseFloat(qtd);
+
+      // Atualiza o produto no array
+      produtosAdicionados[produtoEmEdicaoIndex] = {
+        nome: nomeProduto,
+        largura: largura,
+        altura: altura,
+        quantidade: qtd,
+        vidro: vidro,
+        area: area,
+        valorUnitario: unitario,
+        valorTotal: total,
+        foto: fotoDataURL,
+        corHex: corHex,
+        corNome: corNome
+      };
+
+      // Renderiza a lista novamente
+      renderizarProdutosAdicionados();
+      // Limpa os campos do formulário
+      limparCamposProduto();
+      // Reseta o estado de edição
+      document.getElementById("adicionarProdutoBtn").classList.remove("hidden");
+      document.getElementById("salvarEdicaoBtn").classList.add("hidden");
+      produtoEmEdicaoIndex = -1;
     }
 
     // Função para limpar os campos do formulário de produto
@@ -573,7 +692,6 @@
       document.getElementById("produtoVidro").value = '';
       document.getElementById("produtoArea").value = ''; // Limpa o campo de área
       document.getElementById("produtoUnitario").value = '';
-      // document.getElementById("produtoTotal").value = ''; // Este campo foi removido
       document.getElementById("produtoFoto").value = ''; // Limpa o input de arquivo
       document.getElementById("produtoCor").value = '#ffffff'; // Reseta a cor para branco
       document.getElementById("produtoCorNome").value = ''; // Limpa o nome da cor
@@ -634,9 +752,9 @@
       doc.setFont(undefined, "normal");
       // Informações de contato da empresa alinhadas à direita
       doc.text("Avenida Frei Florentino, 214, Centro, Muzambinho", doc.internal.pageSize.width - margin, 4, { align: "right" });
-      doc.text("CNPJ: 00.000.000/0001-00", doc.internal.pageSize.width - margin, 8, { align: "right" });
+      doc.text("CNPJ: 19.397.220.0001/29", doc.internal.pageSize.width - margin, 8, { align: "right" });
       doc.text("Telefone: (35)3571-5750", doc.internal.pageSize.width - margin, 12, { align: "right" });
-      doc.text("Email: vidroartmuz@gmail.com", doc.internal.pageSize.width - margin, 16, { align: "right" });
+      doc.text("WhatsApp: (35)99162-4506", doc.internal.pageSize.width - margin, 16, { align: "right" });
 
       y = 27; // Posição inicial após o cabeçalho
 
@@ -733,9 +851,9 @@
             doc.setTextColor(255, 255, 255);
             doc.setFont(undefined, "normal");
             doc.text("Avenida Frei Florentino, 214, Centro, Muzambinho", doc.internal.pageSize.width - margin, 4, { align: "right" });
-            doc.text("CNPJ: 00.000.000/0001-00", doc.internal.pageSize.width - margin, 8, { align: "right" });
+            doc.text("CNPJ: 19.397.220.0001/29", doc.internal.pageSize.width - margin, 8, { align: "right" });
             doc.text("Telefone: (35)3571-5750", doc.internal.pageSize.width - margin, 12, { align: "right" });
-            doc.text("Email: vidroartmuz@gmail.com", doc.internal.pageSize.width - margin, 16, { align: "right" });
+            doc.text("WhatsApp: (35)99162-4506", doc.internal.pageSize.width - margin, 16, { align: "right" });
             y = 27;
 
             // Repete o título "ORÇAMENTO" estilizado na nova página
@@ -898,7 +1016,7 @@
       doc.text("FORMAS DE PAGAMENTO:", margin, y); // Alinhado à esquerda
       doc.setFont(undefined, "normal");
       doc.setTextColor(textColor);
-      doc.text("Cartão de Crédito/Débito, Pix, Boleto, Cheque", margin, y + lineSpacing); // Alinhado à esquerda
+      doc.text("Cartão de Crédito/Débito, Pix, Cheque", margin, y + lineSpacing); // Alinhado à esquerda
       y += lineSpacing * 2; // Espaçamento após as formas de pagamento
 
       // --- Rodapé para Assinaturas ---
@@ -918,7 +1036,6 @@
       doc.setFontSize(6.5);
       doc.setTextColor(150);
       doc.text(`Página 1 de 1`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 6, { align: "center" }); // Centralizado
-
 
       window.open(doc.output("bloburl"), "_blank");
     }
@@ -945,4 +1062,3 @@
   </script>
 </body>
 </html>
-```
