@@ -785,7 +785,7 @@
       doc.rect(titleRectX, titleRectY, titleRectWidth, titleRectHeight, 'S');
 
       doc.setTextColor(headerColor);
-      doc.text(titleText, centerX, y + 3); // Centralizado
+      doc.text(titleText, centerX, y + 5); // Centralizado
       y += titleRectHeight + 4;
       doc.setDrawColor(headerColor);
       doc.setLineWidth(0.4);
@@ -875,7 +875,7 @@
             doc.setLineWidth(0.5);
             doc.rect(titleRectXPage2, y - 2, titleRectWidthPage2, titleRectHeight, 'S');
             doc.setTextColor(headerColor);
-            doc.text("ORÇAMENTO (continuação)", centerXPage2, y + 4); // Centralizado
+            doc.text("ORÇAMENTO (continuação)", centerXPage2, y + 5); // Centralizado
             y += titleRectHeight + 3;
             doc.setDrawColor(headerColor);
             doc.setLineWidth(0.4);
@@ -887,7 +887,7 @@
             doc.setFontSize(9);
             doc.setTextColor(255, 255, 255);
             doc.setFont(undefined, "bold");
-            doc.text("PRODUTOS (continuação)", margin + sectionPadding, y + 3.5); // Alinhado à esquerda
+            doc.text("PRODUTOS (continuação)", margin + sectionPadding, y + 4.5); // Alinhado à esquerda
             y += 8;
         }
 
