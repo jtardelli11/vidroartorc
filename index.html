@@ -1057,28 +1057,98 @@
       doc.setTextColor(150);
       doc.text(`Página 1 de 1`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 6, { align: "center" }); // Centralizado
 
-      window.open(doc.output("bloburl"), "_blank");
+      // --- Salvar o histórico local ---
+const nomeArquivo = `Orçamento_${new Date().toLocaleDateString('pt-BR')}_${new Date().toLocaleTimeString('pt-BR').replace(/:/g, '-')}.pdf`;
+
+// Captura dados importantes do orçamento
+const nomeCliente = document.getElementById("clienteNome").value || "Cliente não informado";
+const valorTotal = document.querySelector("#listaProdutos")
+  ? Array.from(document.querySelectorAll("#listaProdutos .text-md"))
+      .reduce((acc, el) => {
+        const match = el.textContent.match(/R\$ ([\d.,]+)/);
+        return match ? acc + parseFloat(match[1].replace(",", ".")) : acc;
+      }, 0)
+      .toFixed(2)
+  : "0.00";
+
+// Adiciona ao localStorage
+let historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
+historico.push({
+  nome: nomeArquivo,
+  cliente: nomeCliente,
+  valor: valorTotal,
+  data: new Date().toLocaleString('pt-BR')
+});
+localStorage.setItem('historicoPDFs', JSON.stringify(historico));
+
+// Gera o PDF e abre em nova aba
+doc.save(nomeArquivo);
+
     }
 
     // --- JavaScript para a barra de progresso de rolagem ---
-    window.addEventListener('scroll', updateProgressBar);
-    window.addEventListener('resize', updateProgressBar); // Atualiza em caso de redimensionamento
+document.addEventListener('DOMContentLoaded', updateProgressBar);
 
-    function updateProgressBar() {
-      const progressBar = document.getElementById('progressBar');
-      const totalHeight = document.body.scrollHeight - window.innerHeight;
-      const scrollPosition = window.scrollY;
+// --- Controle do Modal de Histórico ---
+const btnHistorico = document.getElementById('btnHistorico');
+const modalHistorico = document.getElementById('modalHistorico');
+const listaHistorico = document.getElementById('listaHistorico');
+const limparHistorico = document.getElementById('limparHistorico');
+const fecharHistorico = document.getElementById('fecharHistorico');
 
-      if (totalHeight > 0) { // Evita divisão por zero se a página não tiver rolagem
-        const progress = (scrollPosition / totalHeight) * 100;
-        progressBar.style.width = progress + '%';
-      } else {
-        progressBar.style.width = '100%'; // Se não houver rolagem, a barra fica cheia
-      }
-    }
+// Abrir modal
+btnHistorico.addEventListener('click', () => {
+  const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
+  listaHistorico.innerHTML = '';
 
-    // Chama a função uma vez ao carregar a página para definir o estado inicial
-    document.addEventListener('DOMContentLoaded', updateProgressBar);
-  </script>
+  if (historico.length === 0) {
+    listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Nenhum orçamento salvo ainda.</li>`;
+  } else {
+    historico.slice().reverse().forEach(item => {
+      const li = document.createElement('li');
+      li.className = "flex justify-between items-center border-b py-2 text-sm";
+      li.innerHTML = `
+        <div>
+          <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
+          <span class="text-gray-600">${item.nome}</span>
+        </div>
+        <div class="text-right">
+          <span class="text-gray-700 font-bold">R$ ${item.valor || "0.00"}</span><br>
+          <span class="text-gray-500">${item.data}</span>
+        </div>
+      `;
+      listaHistorico.appendChild(li);
+    });
+  }
+
+  modalHistorico.classList.remove('hidden');
+});
+
+// Fechar modal
+fecharHistorico.addEventListener('click', () => {
+  modalHistorico.classList.add('hidden');
+});
+
+// Limpar histórico
+limparHistorico.addEventListener('click', () => {
+  if (confirm("Tem certeza que deseja apagar todo o histórico?")) {
+    localStorage.removeItem('historicoPDFs');
+    listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Histórico limpo.</li>`;
+    setTimeout(() => modalHistorico.classList.add('hidden'), 1000);
+  }
+});
+    </script>
+    
+  <!-- 🧾 Modal do Histórico -->
+<div id="modalHistorico" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+  <div class="bg-white p-6 rounded-2xl w-11/12 max-w-lg shadow-2xl text-gray-800">
+    <h2 class="text-2xl font-bold mb-4 text-center text-green-800">Histórico de Orçamentos</h2>
+    <ul id="listaHistorico" class="text-gray-700 mb-4 max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50"></ul>
+    <div class="flex justify-center gap-4">
+      <button id="limparHistorico" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">🗑️ Limpar</button>
+      <button id="fecharHistorico" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">Fechar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
