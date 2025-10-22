@@ -1082,7 +1082,8 @@ historico.push({
 localStorage.setItem('historicoPDFs', JSON.stringify(historico));
 
 // Gera o PDF e abre em nova aba
-doc.save(nomeArquivo);
+window.open(doc.output('bloburl'), '_blank');
+
 
     }
 
