@@ -1088,6 +1088,18 @@ doc.save(nomeArquivo);
 
     // --- JavaScript para a barra de progresso de rolagem ---
 document.addEventListener('DOMContentLoaded', updateProgressBar);
+    function updateProgressBar() {
+  const progressBar = document.getElementById("progressBar");
+  window.addEventListener("scroll", () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const scrollPercent = (scrollTop / docHeight) * 100;
+    progressBar.style.width = `${scrollPercent}%`;
+  });
+}
+
+
+    // --- Controle do Modal de Histórico ---
 
 // --- Controle do Modal de Histórico ---
 const btnHistorico = document.getElementById('btnHistorico');
@@ -1096,47 +1108,47 @@ const listaHistorico = document.getElementById('listaHistorico');
 const limparHistorico = document.getElementById('limparHistorico');
 const fecharHistorico = document.getElementById('fecharHistorico');
 
-// Abrir modal
 btnHistorico.addEventListener('click', () => {
   const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
   listaHistorico.innerHTML = '';
 
   if (historico.length === 0) {
     listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Nenhum orçamento salvo ainda.</li>`;
-  } else {
-    historico.slice().reverse().forEach(item => {
-      const li = document.createElement('li');
-      li.className = "flex justify-between items-center border-b py-2 text-sm";
-      li.innerHTML = `
-        <div>
-          <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
-          <span class="text-gray-600">${item.nome}</span>
-        </div>
-        <div class="text-right">
-          <span class="text-gray-700 font-bold">R$ ${item.valor || "0.00"}</span><br>
-          <span class="text-gray-500">${item.data}</span>
-        </div>
-      `;
-      listaHistorico.appendChild(li);
-    });
+    return;
   }
+
+  historico.slice().reverse().forEach(item => {
+    const li = document.createElement('li');
+    li.className = "flex justify-between items-center border-b py-2 text-sm";
+    li.innerHTML = `
+      <div>
+        <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
+        <span class="text-gray-600">${item.nome}</span><br>
+        <span class="text-gray-500">${item.data}</span>
+      </div>
+      <div class="text-right">
+        <span class="text-gray-800 font-bold block mb-1">R$ ${item.valor || "0.00"}</span>
+        <button onclick="alert('Arquivo: ${item.nome}')"
+          class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">⬇️ Baixar</button>
+      </div>
+    `;
+    listaHistorico.appendChild(li);
+  });
 
   modalHistorico.classList.remove('hidden');
 });
 
-// Fechar modal
-fecharHistorico.addEventListener('click', () => {
-  modalHistorico.classList.add('hidden');
-});
+fecharHistorico.addEventListener('click', () => modalHistorico.classList.add('hidden'));
 
-// Limpar histórico
 limparHistorico.addEventListener('click', () => {
-  if (confirm("Tem certeza que deseja apagar todo o histórico?")) {
+  if (confirm("Apagar todo o histórico?")) {
     localStorage.removeItem('historicoPDFs');
     listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Histórico limpo.</li>`;
     setTimeout(() => modalHistorico.classList.add('hidden'), 1000);
   }
 });
+
+
     </script>
     
   <!-- 🧾 Modal do Histórico -->
