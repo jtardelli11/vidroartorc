@@ -1087,7 +1087,15 @@ historico.push({
   nome: nomeArquivo,
   cliente: nomeCliente,
   valor: valorTotal,
-  data: new Date().toLocaleString('pt-BR')
+  data: new Date().toLocaleString('pt-BR'),
+  dadosCliente: {
+    nome: document.getElementById("clienteNome").value,
+    telefone: document.getElementById("clienteTelefone").value,
+    email: document.getElementById("clienteEmail").value,
+    endereco: document.getElementById("clienteEndereco").value,
+    pagamentoAVista: document.getElementById("pagamentoAVista").checked
+  },
+  produtos: produtosAdicionados
 });
 localStorage.setItem('historicoPDFs', JSON.stringify(historico));
 
@@ -1129,23 +1137,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (historico.length === 0) {
       listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Nenhum orçamento salvo ainda.</li>`;
     } else {
-      historico.slice().reverse().forEach(item => {
-        const li = document.createElement('li');
-        li.className = "flex justify-between items-center border-b py-2 text-sm";
-        li.innerHTML = `
-          <div>
-            <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
-            <span class="text-gray-600">${item.nome}</span><br>
-            <span class="text-gray-500">${item.data}</span>
-          </div>
-          <div class="text-right">
-            <span class="text-gray-800 font-bold block mb-1">R$ ${item.valor || "0.00"}</span>
-            <button onclick="alert('Arquivo: ${item.nome}')"
-              class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">⬇️ Baixar</button>
-          </div>
-        `;
-        listaHistorico.appendChild(li);
-      });
+      historico.slice().reverse().forEach((item, index) => {
+  const li = document.createElement('li');
+  li.className = "flex justify-between items-center border-b py-2 text-sm";
+  li.innerHTML = `
+    <div>
+      <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
+      <span class="text-gray-600">${item.nome}</span><br>
+      <span class="text-gray-500">${item.data}</span>
+    </div>
+    <div class="text-right space-y-1">
+      <span class="text-gray-800 font-bold block mb-1">R$ ${item.valor || "0.00"}</span>
+      <button onclick="baixarOrcamento(${historico.length - 1 - index})"
+        class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">⬇️ Baixar</button>
+      <button onclick="editarOrcamento(${historico.length - 1 - index})"
+        class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition">✏️ Editar</button>
+    </div>
+  `;
+  listaHistorico.appendChild(li);
+});
     }
 
     modalHistorico.classList.remove('hidden');
@@ -1160,6 +1170,40 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => modalHistorico.classList.add('hidden'), 1000);
     }
   });
+});
+
+// 🔽 Função para simular download do PDF salvo
+function baixarOrcamento(index) {
+  const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
+  const item = historico[index];
+  if (!item) return alert("Arquivo não encontrado.");
+
+  alert(`Aqui entrará o download do arquivo '${item.nome}' — futuro recurso.`);
+  // Dica: se quiser futuramente, dá pra salvar o PDF no localStorage ou backend pra baixar real.
+}
+
+// ✏️ Função para editar um orçamento salvo
+function editarOrcamento(index) {
+  const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
+  const orcamento = historico[index];
+  if (!orcamento) return alert("Orçamento não encontrado.");
+
+  // Preenche campos do cliente
+  document.getElementById("clienteNome").value = orcamento.dadosCliente.nome || "";
+  document.getElementById("clienteTelefone").value = orcamento.dadosCliente.telefone || "";
+  document.getElementById("clienteEmail").value = orcamento.dadosCliente.email || "";
+  document.getElementById("clienteEndereco").value = orcamento.dadosCliente.endereco || "";
+  document.getElementById("pagamentoAVista").checked = orcamento.dadosCliente.pagamentoAVista || false;
+
+  // Carrega os produtos
+  produtosAdicionados = orcamento.produtos || [];
+  renderizarProdutosAdicionados();
+
+  // Fecha o modal e rola até o painel
+  document.getElementById("modalHistorico").classList.add("hidden");
+  document.getElementById("orcamento").scrollIntoView({ behavior: "smooth" });
+}
+
 });
 
   </script>
