@@ -1175,18 +1175,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// 🔽 Função para simular download do PDF salvo
-function baixarOrcamento(index) {
+// ✏️ Função para editar um orçamento salvo
+// 🔽 Função para simular download do PDF salvo (futuro)
+window.baixarOrcamento = function(index) {
   const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
   const item = historico[index];
   if (!item) return alert("Arquivo não encontrado.");
-
   alert(`Aqui entrará o download do arquivo '${item.nome}' — futuro recurso.`);
-  // Dica: se quiser futuramente, dá pra salvar o PDF no localStorage ou backend pra baixar real.
-}
+};
 
 // ✏️ Função para editar um orçamento salvo
-window.editarOrcamento(index) {
+window.editarOrcamento = function(index) {
   const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
   const orcamento = historico[index];
   if (!orcamento) return alert("Orçamento não encontrado.");
@@ -1205,8 +1204,10 @@ window.editarOrcamento(index) {
   // Fecha o modal e rola até o painel
   document.getElementById("modalHistorico").classList.add("hidden");
   document.getElementById("orcamento").scrollIntoView({ behavior: "smooth" });
+};
 
-  window.removerOrcamento(index) {
+// 🗑️ Função para remover um orçamento específico
+window.removerOrcamento = function(index) {
   let historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
   const item = historico[index];
   if (!item) return alert("Orçamento não encontrado.");
@@ -1215,13 +1216,11 @@ window.editarOrcamento(index) {
     historico.splice(index, 1); // remove apenas esse orçamento
     localStorage.setItem('historicoPDFs', JSON.stringify(historico));
     alert("Orçamento removido com sucesso!");
-    
     // Atualiza a lista automaticamente
     document.getElementById('btnHistorico').click();
   }
-}
+};
 
-}
   </script>
 </div>
 </body>
