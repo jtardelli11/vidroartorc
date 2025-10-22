@@ -785,7 +785,7 @@
       doc.rect(titleRectX, titleRectY, titleRectWidth, titleRectHeight, 'S');
 
       doc.setTextColor(headerColor);
-      doc.text(titleText, centerX, y + 4); // Centralizado
+      doc.text(titleText, centerX, y + 3); // Centralizado
       y += titleRectHeight + 4;
       doc.setDrawColor(headerColor);
       doc.setLineWidth(0.4);
@@ -876,7 +876,7 @@
             doc.rect(titleRectXPage2, y - 2, titleRectWidthPage2, titleRectHeight, 'S');
             doc.setTextColor(headerColor);
             doc.text("ORÇAMENTO (continuação)", centerXPage2, y + 4); // Centralizado
-            y += titleRectHeight + 4;
+            y += titleRectHeight + 3;
             doc.setDrawColor(headerColor);
             doc.setLineWidth(0.4);
             doc.line(margin, y, doc.internal.pageSize.width - margin, y);
