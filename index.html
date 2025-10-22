@@ -465,9 +465,23 @@
             <input type="file" accept="image/*" id="produtoFoto" class="input-field">
           </div>
           <div class="flex justify-center gap-6 pt-4">
-            <button type="button" class="btn-green" id="adicionarProdutoBtn" onclick="adicionarProduto()"><i class="fas fa-plus mr-2"></i> Adicionar Produto</button>
-            <button type="button" class="btn-green hidden" id="salvarEdicaoBtn" onclick="salvarEdicaoProduto()"><i class="fas fa-save mr-2"></i> Salvar Edição</button>
-            <button type="button" class="btn-black" onclick="gerarPDF()"><i class="fas fa-file-pdf mr-2"></i> Gerar Orçamento</button>
+  <button type="button" class="btn-green" id="adicionarProdutoBtn" onclick="adicionarProduto()">
+    <i class="fas fa-plus mr-2"></i> Adicionar Produto
+  </button>
+  
+  <button type="button" class="btn-green hidden" id="salvarEdicaoBtn" onclick="salvarEdicaoProduto()">
+    <i class="fas fa-save mr-2"></i> Salvar Edição
+  </button>
+  
+  <button type="button" class="btn-black" onclick="gerarPDF()">
+    <i class="fas fa-file-pdf mr-2"></i> Gerar Orçamento
+  </button>
+
+  <button id="btnHistorico" type="button" 
+    class="bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-600 font-semibold transition">
+    📜 Ver Histórico de Orçamentos
+  </button>
+</div>
           </div>
         </form>
 
