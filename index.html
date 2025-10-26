@@ -1258,13 +1258,23 @@ window.removerOrcamento = function(index) {
   }
 };
     <script>
-function abrirLinha(nome) {
-  alert(`Abrindo conteúdo da ${nome.toUpperCase()}...`);
-  // 🔹 Aqui futuramente você pode trocar o alert por:
-  // document.getElementById('conteudoLinha').innerHTML = `<h2>${nome}</h2>`;
-  // ou até carregar um arquivo externo usando fetch().
+<script>
+async function abrirLinha(nome) {
+  const container = document.getElementById('conteudoLinha');
+  container.innerHTML = `<p class="text-gray-400 italic">Carregando ${nome}...</p>`;
+
+  try {
+    const resposta = await fetch(`${nome}.html`);
+    if (!resposta.ok) throw new Error("Página não encontrada.");
+
+    const conteudo = await resposta.text();
+    container.innerHTML = conteudo;
+  } catch (erro) {
+    container.innerHTML = `<p class="text-red-500">Erro ao carregar o conteúdo da linha: ${erro.message}</p>`;
+  }
 }
-</script>
+
+
 
 
   </script>
