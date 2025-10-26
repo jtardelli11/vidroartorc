@@ -1267,6 +1267,51 @@ window.removerOrcamento = function(index) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+    // 🔹 Mostrar a aba Esquadrias
+document.getElementById("abaEsquadrias").addEventListener("click", () => {
+  document.getElementById("orcamento").classList.add("hidden");
+  document.getElementById("esquadrias").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// 🔹 Voltar para o painel principal
+function voltarOrcamento() {
+  document.getElementById("esquadrias").classList.add("hidden");
+  document.getElementById("orcamento").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// 🔹 Função de cálculo completo da esquadria
+function calcularEsquadriaCompleta() {
+  const tipo = document.getElementById("tipoEsq").value;
+  const largura = parseFloat(document.getElementById("larguraEsq").value) || 0;
+  const altura = parseFloat(document.getElementById("alturaEsq").value) || 0;
+  const precoPerfil = parseFloat(document.getElementById("precoPerfil").value) || 0;
+  const precoVidro = parseFloat(document.getElementById("precoVidro").value) || 0;
+  const lucro = parseFloat(document.getElementById("margemLucro").value) || 0;
+
+  const area = (largura / 1000) * (altura / 1000);
+  const perimetro = (largura + altura) * 2 / 1000;
+  
+  let fatorPerfil = 1.1;
+  if (tipo === "correr-4") fatorPerfil = 1.25;
+  if (tipo === "porta") fatorPerfil = 1.15;
+  if (tipo === "fixa") fatorPerfil = 0.95;
+
+  const custoPerfil = precoPerfil * perimetro * fatorPerfil;
+  const custoVidro = precoVidro * area;
+  const custoTotal = custoPerfil + custoVidro;
+  const precoFinal = custoTotal * (1 + lucro / 100);
+
+  document.getElementById("resultadoEsquadria").innerHTML = `
+    Área: ${area.toFixed(2)} m²<br>
+    Perímetro: ${perimetro.toFixed(2)} m<br>
+    Custo: R$ ${custoTotal.toFixed(2)}<br>
+    <span class="text-green-400 text-3xl font-bold">Preço Final: R$ ${precoFinal.toFixed(2)}</span>
+  `;
+}
+
+
 
   </script>
 </div>
