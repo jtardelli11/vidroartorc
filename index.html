@@ -428,30 +428,6 @@
   </section>
 
   <section id="orcamento" class="py-16">
-    <!-- 🟩 SEÇÃO DE ESCOLHA DE LINHA -->
-<section id="menu-linhas" class="py-20 text-center text-white">
-  <h3 class="text-3xl font-bold mb-10 bg-yellow-400 text-black inline-block px-6 py-2 rounded-lg">
-    ESCOLHA A LINHA DE SEU PROJETO
-  </h3>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-8 justify-center">
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105"
-            onclick="abrirLinha('suprema')">LINHA SUPREMA</button>
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105"
-            onclick="abrirLinha('gold')">LINHA GOLD</button>
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105"
-            onclick="abrirLinha('modulo')">LINHA MÓDULO PRÁTICO</button>
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105"
-            onclick="abrirLinha('unnion')">LINHA UNNION</button>
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105"
-            onclick="abrirLinha('portao')">PORTÃO</button>
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105"
-            onclick="abrirLinha('linha30')">LINHA 30</button>
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105"
-            onclick="abrirLinha('gavetas')">GAVETAS</button>
-  </div>
-</section>
-
     <div class="max-w-6xl mx-auto px-4">
       <h3 class="text-4xl font-bold text-center mb-12 animate-slide-up">Painel de Geração de Orçamentos</h3>
       <div class="glass-card p-10 animate-slide-up">
@@ -1257,24 +1233,6 @@ window.removerOrcamento = function(index) {
     document.getElementById('btnHistorico').click();
   }
 };
-    <script>
-async function abrirLinha(nome) {
-  const container = document.getElementById('conteudoLinha');
-  container.innerHTML = `<p class="text-gray-400 italic">Carregando ${nome}...</p>`;
-
-  try {
-    const resposta = await fetch(`${nome}.html`);
-    if (!resposta.ok) throw new Error("Página não encontrada.");
-
-    const conteudo = await resposta.text();
-    container.innerHTML = conteudo;
-  } catch (erro) {
-    container.innerHTML = `<p class="text-red-500">Erro ao carregar o conteúdo da linha: ${erro.message}</p>`;
-  }
-}
-
-
-
 
   </script>
 </div>
