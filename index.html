@@ -415,9 +415,8 @@
 </h1>
 
       <nav class="space-x-6 text-lg">
-  <a href="#orcamento" class="hover:underline">Orçamento</a>
-  <a href="#" id="abaEsquadrias" class="hover:underline">Esquadrias</a>
-</nav>
+        <a href="#orcamento" class="hover:underline">Orçamento</a>
+      </nav>
     </div>
   </header>
 
@@ -519,9 +518,6 @@
       </button>
     </div>
   </div>
-</div>
-
-
   <script>
     // Array para armazenar os produtos adicionados
     let produtosAdicionados = [];
@@ -1237,127 +1233,8 @@ window.removerOrcamento = function(index) {
     document.getElementById('btnHistorico').click();
   }
 };
-  
- // 🔹 Mostrar a aba Esquadrias
-document.getElementById("abaEsquadrias").addEventListener("click", () => {
-  document.getElementById("orcamento").classList.add("hidden");
-  document.getElementById("esquadrias").classList.remove("hidden");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-
-  // Botão "Voltar para Orçamentos"
-  function voltarOrcamento() {
-    document.getElementById("esquadrias").classList.add("hidden");
-    document.getElementById("orcamento").classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-});
-
-// 🔹 Voltar para o painel principal
-function voltarOrcamento() {
-  document.getElementById("esquadrias").classList.add("hidden");
-  document.getElementById("orcamento").classList.remove("hidden");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// 🔹 Função de cálculo completo da esquadria
-function calcularEsquadriaCompleta() {
-  const tipo = document.getElementById("tipoEsq").value;
-  const largura = parseFloat(document.getElementById("larguraEsq").value) || 0;
-  const altura = parseFloat(document.getElementById("alturaEsq").value) || 0;
-  const precoPerfil = parseFloat(document.getElementById("precoPerfil").value) || 0;
-  const precoVidro = parseFloat(document.getElementById("precoVidro").value) || 0;
-  const lucro = parseFloat(document.getElementById("margemLucro").value) || 0;
-
-  const area = (largura / 1000) * (altura / 1000);
-  const perimetro = (largura + altura) * 2 / 1000;
-  
-  let fatorPerfil = 1.1;
-  if (tipo === "correr-4") fatorPerfil = 1.25;
-  if (tipo === "porta") fatorPerfil = 1.15;
-  if (tipo === "fixa") fatorPerfil = 0.95;
-
-  const custoPerfil = precoPerfil * perimetro * fatorPerfil;
-  const custoVidro = precoVidro * area;
-  const custoTotal = custoPerfil + custoVidro;
-  const precoFinal = custoTotal * (1 + lucro / 100);
-
-  document.getElementById("resultadoEsquadria").innerHTML = `
-    Área: ${area.toFixed(2)} m²<br>
-    Perímetro: ${perimetro.toFixed(2)} m<br>
-    Custo: R$ ${custoTotal.toFixed(2)}<br>
-    <span class="text-green-400 text-3xl font-bold">Preço Final: R$ ${precoFinal.toFixed(2)}</span>
-  `;
-}
-
-
 
   </script>
-
-  
-
-<!-- 🔹 SEÇÃO DE CÁLCULO DE ESQUADRIAS -->
-<section id="esquadrias" class="py-16 hidden text-white">
-  <div class="max-w-6xl mx-auto px-4 text-center">
-    <h3 class="text-4xl font-bold mb-10 text-green-400">Cálculo de Esquadrias</h3>
-    
-    <div class="glass-card p-8 text-left space-y-6">
-      <p class="text-lg opacity-90">Preencha os campos abaixo para calcular automaticamente o custo da esquadria:</p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div>
-          <label class="block mb-2 font-semibold">Tipo</label>
-          <select id="tipoEsq" class="input-field">
-            <option value="correr-2">Janela de correr (2 folhas)</option>
-            <option value="correr-4">Janela de correr (4 folhas)</option>
-            <option value="basculante">Basculante</option>
-            <option value="porta">Porta</option>
-            <option value="fixa">Fixa</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block mb-2 font-semibold">Largura (mm)</label>
-          <input type="number" id="larguraEsq" placeholder="Ex: 1200" class="input-field">
-        </div>
-
-        <div>
-          <label class="block mb-2 font-semibold">Altura (mm)</label>
-          <input type="number" id="alturaEsq" placeholder="Ex: 1500" class="input-field">
-        </div>
-
-        <div>
-          <label class="block mb-2 font-semibold">Preço Perfil (R$/m)</label>
-          <input type="number" id="precoPerfil" value="42.90" class="input-field">
-        </div>
-
-        <div>
-          <label class="block mb-2 font-semibold">Preço Vidro (R$/m²)</label>
-          <input type="number" id="precoVidro" value="110.00" class="input-field">
-        </div>
-
-        <div>
-          <label class="block mb-2 font-semibold">Margem Lucro (%)</label>
-          <input type="number" id="margemLucro" value="25" class="input-field">
-        </div>
-      </div>
-
-      <button class="btn-green mt-6" onclick="calcularEsquadriaCompleta()">
-        <i class="fas fa-calculator"></i> Calcular Esquadria
-      </button>
-
-      <h4 id="resultadoEsquadria" class="text-2xl font-bold text-green-400 mt-6"></h4>
-
-      <div class="flex justify-center mt-8">
-        <button class="btn-black" onclick="voltarOrcamento()">
-          <i class="fas fa-arrow-left"></i> Voltar para Orçamentos
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
+</div>
 </body>
 </html>
