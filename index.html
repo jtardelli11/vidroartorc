@@ -399,27 +399,7 @@
       background-color: var(--main-green); /* Cor da barra de progresso */
       transition: width 0.1s ease-out; /* Transição suave para a largura */
     }
-
-@keyframes fade-up {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-up {
-  animation: fade-up 0.8s ease-out;
-}
-
-.linha-btn {
-  @apply bg-green-500/30 hover:bg-green-400/60 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg border border-green-400/30 transition-all duration-300;
-  backdrop-filter: blur(8px);
-}
-
-.linha-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
-}
-</style>
-  
+  </style>
 </head>
 <body class="min-h-screen"> 
   <!-- Barra de Progresso de Rolagem -->
@@ -446,28 +426,6 @@
       <p class="text-xl opacity:90">Portas, janelas, box e projetos sob medida para melhor performance e agilidade.</p>
     </div>
   </section>
-
-<!-- 🟩 SELEÇÃO DE LINHA - VIDROART STYLE -->
-<section id="selecaoLinha" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
-
-  <!-- efeito de vidro central -->
-  <div class="backdrop-blur-lg bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-10 w-11/12 max-w-4xl animate-fade-up">
-    <h2 class="text-3xl md:text-4xl font-bold text-center mb-10 tracking-wide text-green-400 drop-shadow-lg">
-      ESCOLHA A LINHA DE SEU PROJETO
-    </h2>
-
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 justify-center">
-      <button class="linha-btn" onclick="selecionarLinha('Suprema')">Linha Suprema</button>
-      <button class="linha-btn" onclick="selecionarLinha('Gold')">Linha Gold</button>
-      <button class="linha-btn" onclick="selecionarLinha('Módulo Prático')">Linha Módulo Prático</button>
-      <button class="linha-btn" onclick="selecionarLinha('Unnion')">Linha Unnion</button>
-      <button class="linha-btn" onclick="selecionarLinha('Portão')">Portão</button>
-      <button class="linha-btn" onclick="selecionarLinha('Linha 30')">Linha 30</button>
-      <button class="linha-btn" onclick="selecionarLinha('Gavetas')">Gavetas</button>
-    </div>
-  </div>
-</section>
-
 
   <section id="orcamento" class="py-16">
     <div class="max-w-6xl mx-auto px-4">
@@ -561,17 +519,6 @@
     </div>
   </div>
   <script>
-
-let projeto = { linha: '', produtos: [] };
-
-
-function selecionarLinha(nome) {
-  projeto.linha = nome;
-  document.getElementById('selecaoLinha').classList.add('hidden'); // Esconde a tela de seleção
-  document.getElementById('orcamento').classList.remove('hidden'); // Mostra o painel de orçamento
-  alert(`Linha escolhida: ${nome}`);
-}
-    
     // Array para armazenar os produtos adicionados
     let produtosAdicionados = [];
     let produtoEmEdicaoIndex = -1; // Variável para controlar qual produto está sendo editado
@@ -895,8 +842,6 @@ function selecionarLinha(nome) {
       doc.text(`Telefone: ${document.getElementById("clienteTelefone").value}`, margin + sectionPadding, y + sectionPadding + 8); // Alinhado à esquerda
       doc.text(`E-mail: ${document.getElementById("clienteEmail").value}`, margin + sectionPadding, y + sectionPadding + 12); // Alinhado à esquerda
       doc.text(`Endereço da Obra: ${document.getElementById("clienteEndereco").value}`, margin + sectionPadding, y + sectionPadding + 16); // Alinhado à esquerda
-      doc.text(`Linha do Projeto: ${projeto.linha}`, margin + sectionPadding, y + sectionPadding + 20);
-
       
       // --- Data e Número do Orçamento ---
       const dataAtual = new Date();
@@ -1288,12 +1233,8 @@ window.removerOrcamento = function(index) {
     document.getElementById('btnHistorico').click();
   }
 };
-  </div>
-</div> <!-- ✅ fecha o modal completamente antes do script -->
 
-<script>
-  // (todo o seu JavaScript que já está acima permanece aqui)
-
+  </script>
+</div>
 </body>
 </html>
-
