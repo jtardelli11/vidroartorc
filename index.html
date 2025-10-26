@@ -563,6 +563,9 @@
   </div>
   <script>
 
+let projeto = { linha: '', produtos: [] };
+
+
 function selecionarLinha(nome) {
   projeto.linha = nome;
   document.getElementById('selecaoLinha').classList.add('hidden'); // Esconde a tela de seleção
@@ -1287,7 +1290,13 @@ window.removerOrcamento = function(index) {
   }
 };
 
-  </script>
-</div>
+    </div>
+</div> <!-- ✅ fecha o modal completamente antes do script -->
+
+<script>
+  // todo o seu JavaScript aqui
+</script>
+
 </body>
 </html>
+
