@@ -1257,6 +1257,15 @@ window.removerOrcamento = function(index) {
     document.getElementById('btnHistorico').click();
   }
 };
+    <script>
+function abrirLinha(nome) {
+  alert(`Abrindo conteúdo da ${nome.toUpperCase()}...`);
+  // 🔹 Aqui futuramente você pode trocar o alert por:
+  // document.getElementById('conteudoLinha').innerHTML = `<h2>${nome}</h2>`;
+  // ou até carregar um arquivo externo usando fetch().
+}
+</script>
+
 
   </script>
 </div>
