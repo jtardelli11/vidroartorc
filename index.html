@@ -399,7 +399,28 @@
       background-color: var(--main-green); /* Cor da barra de progresso */
       transition: width 0.1s ease-out; /* Transição suave para a largura */
     }
-  </style>
+
+    <style>
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.8s ease-out;
+}
+
+.linha-btn {
+  @apply bg-green-500/30 hover:bg-green-400/60 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg border border-green-400/30 transition-all duration-300;
+  backdrop-filter: blur(8px);
+}
+
+.linha-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+}
+</style>
+  
 </head>
 <body class="min-h-screen"> 
   <!-- Barra de Progresso de Rolagem -->
@@ -427,19 +448,27 @@
     </div>
   </section>
 
-  <!-- 🔰 NOVA SEÇÃO - SELEÇÃO DE LINHA -->
-<section id="selecaoLinha" class="text-center py-20">
-  <h2 class="text-3xl font-bold mb-6 text-white">ESCOLHA A LINHA DE SEU PROJETO</h2>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 justify-center">
-    <button class="btn-green" onclick="selecionarLinha('Suprema')">Linha Suprema</button>
-    <button class="btn-green" onclick="selecionarLinha('Gold')">Linha Gold</button>
-    <button class="btn-green" onclick="selecionarLinha('Módulo Prático')">Linha Módulo Prático</button>
-    <button class="btn-green" onclick="selecionarLinha('Unnion')">Linha Unnion</button>
-    <button class="btn-green" onclick="selecionarLinha('Portão')">Portão</button>
-    <button class="btn-green" onclick="selecionarLinha('Linha 30')">Linha 30</button>
-    <button class="btn-green" onclick="selecionarLinha('Gavetas')">Gavetas</button>
+<!-- 🟩 SELEÇÃO DE LINHA - VIDROART STYLE -->
+<section id="selecaoLinha" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+
+  <!-- efeito de vidro central -->
+  <div class="backdrop-blur-lg bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-10 w-11/12 max-w-4xl animate-fade-up">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-10 tracking-wide text-green-400 drop-shadow-lg">
+      ESCOLHA A LINHA DE SEU PROJETO
+    </h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+      <button class="linha-btn" onclick="selecionarLinha('Suprema')">Linha Suprema</button>
+      <button class="linha-btn" onclick="selecionarLinha('Gold')">Linha Gold</button>
+      <button class="linha-btn" onclick="selecionarLinha('Módulo Prático')">Linha Módulo Prático</button>
+      <button class="linha-btn" onclick="selecionarLinha('Unnion')">Linha Unnion</button>
+      <button class="linha-btn" onclick="selecionarLinha('Portão')">Portão</button>
+      <button class="linha-btn" onclick="selecionarLinha('Linha 30')">Linha 30</button>
+      <button class="linha-btn" onclick="selecionarLinha('Gavetas')">Gavetas</button>
+    </div>
   </div>
 </section>
+
 
   <section id="orcamento" class="py-16">
     <div class="max-w-6xl mx-auto px-4">
