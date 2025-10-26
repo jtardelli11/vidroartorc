@@ -1235,30 +1235,13 @@ window.removerOrcamento = function(index) {
   }
 };
   
-  // Abre o módulo de esquadrias
-  document.getElementById("abaEsquadrias").addEventListener("click", () => {
-    const orcamento = document.getElementById("orcamento");
-    const esquadrias = document.getElementById("esquadrias");
-    const container = document.getElementById("conteudoEsquadrias");
+ // 🔹 Mostrar a aba Esquadrias
+document.getElementById("abaEsquadrias").addEventListener("click", () => {
+  document.getElementById("orcamento").classList.add("hidden");
+  document.getElementById("esquadrias").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
 
-    // Esconde o painel de orçamento e mostra o de esquadrias
-    orcamento.classList.add("hidden");
-    esquadrias.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    // Carrega o arquivo esquadrias.html (somente uma vez)
-    if (!container.dataset.loaded) {
-      fetch("esquadrias.html")
-        .then(resp => resp.text())
-        .then(html => {
-          container.innerHTML = html;
-          container.dataset.loaded = "true";
-        })
-        .catch(() => {
-          container.innerHTML = "<p>Erro ao carregar o módulo de esquadrias.</p>";
-        });
-    }
-  });
 
   // Botão "Voltar para Orçamentos"
   function voltarOrcamento() {
