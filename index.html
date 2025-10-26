@@ -415,10 +415,8 @@
 </h1>
 
       <nav class="space-x-6 text-lg">
-  <a href="#orcamento" class="hover:underline">Orçamento</a>
-  <a href="#" id="abaEsquadrias" onclick="abrirEsquadrias()">Esquadrias</a>
-</nav>
-
+        <a href="#orcamento" class="hover:underline">Orçamento</a>
+      </nav>
     </div>
   </header>
 
@@ -501,8 +499,6 @@
   <footer class="text-white text-center py-8 mt-20">
     <p class="text-sm">&copy; 2025 VIDROART. Todos os direitos reservados.</p>
   </footer>
-
-
     
   <!-- 🧾 Modal do Histórico -->
 <div id="modalHistorico" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
@@ -1237,44 +1233,8 @@ window.removerOrcamento = function(index) {
     document.getElementById('btnHistorico').click();
   }
 };
-    // --- Controle da aba “Esquadrias” ---
-function abrirEsquadrias() {
-  document.querySelector("header").classList.add("hidden");
-  document.querySelector("section.hero-section")?.classList.add("hidden");
-  document.querySelector("section#orcamento")?.classList.add("hidden");
-  document.querySelector("footer").classList.add("hidden");
-  document.getElementById("paginaEsquadrias").classList.remove("hidden");
-}
-
-function voltarPrincipal() {
-  document.querySelector("header").classList.remove("hidden");
-  document.querySelector("section.hero-section")?.classList.remove("hidden");
-  document.querySelector("section#orcamento")?.classList.remove("hidden");
-  document.querySelector("footer").classList.remove("hidden");
-  document.getElementById("paginaEsquadrias").classList.add("hidden");
-}
-
 
   </script>
 </div>
-  <section id="paginaEsquadrias" class="hidden min-h-screen flex flex-col justify-center items-center text-white">
-  <h2 class="text-3xl font-bold mb-10 text-green-400 animate-fade-in">Escolha a Linha de Seu Projeto</h2>
-
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-6 animate-slide-up">
-    <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full shadow-md transition-all">Linha Suprema</button>
-    <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full shadow-md transition-all">Linha Gold</button>
-    <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full shadow-md transition-all">Linha Módulo Prático</button>
-    <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full shadow-md transition-all">Linha Unnion</button>
-    <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full shadow-md transition-all">Portão</button>
-    <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full shadow-md transition-all">Linha 30</button>
-    <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full shadow-md transition-all">Gavetas</button>
-  </div>
-
-  <button onclick="voltarPrincipal()" class="mt-10 bg-green-600 px-6 py-3 rounded-lg hover:bg-green-700 transition">
-    Voltar
-  </button>
-</section>
-
-
 </body>
 </html>
