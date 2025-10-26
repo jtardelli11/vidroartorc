@@ -416,8 +416,9 @@
 
       <nav class="space-x-6 text-lg">
   <a href="#orcamento" class="hover:underline">Orçamento</a>
-  <a href="#esquadrias" id="abaEsquadrias" class="hover:underline">Esquadrias</a>
+  <a href="#" id="abaEsquadrias" onclick="abrirEsquadrias()">Esquadrias</a>
 </nav>
+
     </div>
   </header>
 
@@ -1240,8 +1241,28 @@ window.removerOrcamento = function(index) {
     document.getElementById('btnHistorico').click();
   }
 };
+    // --- Controle da aba “Esquadrias” ---
+function abrirEsquadrias() {
+  document.querySelector("header").classList.add("hidden");
+  document.querySelector("section.hero-section")?.classList.add("hidden");
+  document.querySelector("section#orcamento")?.classList.add("hidden");
+  document.querySelector("footer").classList.add("hidden");
+  document.getElementById("paginaEsquadrias").classList.remove("hidden");
+}
+
+function voltarPrincipal() {
+  document.querySelector("header").classList.remove("hidden");
+  document.querySelector("section.hero-section")?.classList.remove("hidden");
+  document.querySelector("section#orcamento")?.classList.remove("hidden");
+  document.querySelector("footer").classList.remove("hidden");
+  document.getElementById("paginaEsquadrias").classList.add("hidden");
+}
+
 
   </script>
 </div>
+  <section id="paginaEsquadrias" class="hidden min-h-screen flex flex-col justify-center items-center text-white">
+</section>
+
 </body>
 </html>
