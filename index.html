@@ -1039,10 +1039,6 @@ if (percentualDesconto > 0) {
   y += lineSpacing;
 }
 
-          doc.text(`- R$ ${valorDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
-          y += lineSpacing;
-      }
-
       doc.setDrawColor(headerColor);
       doc.setLineWidth(0.7);
       // Linha mais grossa alinhada à direita
