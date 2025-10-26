@@ -1234,8 +1234,52 @@ window.removerOrcamento = function(index) {
     document.getElementById('btnHistorico').click();
   }
 };
+  
+  // Abre o módulo de esquadrias
+  document.getElementById("abaEsquadrias").addEventListener("click", () => {
+    const orcamento = document.getElementById("orcamento");
+    const esquadrias = document.getElementById("esquadrias");
+    const container = document.getElementById("conteudoEsquadrias");
+
+    // Esconde o painel de orçamento e mostra o de esquadrias
+    orcamento.classList.add("hidden");
+    esquadrias.classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Carrega o arquivo esquadrias.html (somente uma vez)
+    if (!container.dataset.loaded) {
+      fetch("esquadrias.html")
+        .then(resp => resp.text())
+        .then(html => {
+          container.innerHTML = html;
+          container.dataset.loaded = "true";
+        })
+        .catch(() => {
+          container.innerHTML = "<p>Erro ao carregar o módulo de esquadrias.</p>";
+        });
+    }
+  });
+
+  // Botão "Voltar para Orçamentos"
+  function voltarOrcamento() {
+    document.getElementById("esquadrias").classList.add("hidden");
+    document.getElementById("orcamento").classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
 
   </script>
 </div>
+  <!-- Seção Esquadrias (oculta até clicar no menu) -->
+<section id="esquadrias" class="py-16 hidden">
+  <div id="conteudoEsquadrias" class="max-w-6xl mx-auto px-4 text-center text-white">
+    <h3 class="text-2xl font-bold mb-6">Carregando módulo de cálculo...</h3>
+  </div>
+
+  <button class="btn-black mt-8 mx-auto block" onclick="voltarOrcamento()">
+    <i class="fas fa-arrow-left"></i> Voltar para Orçamentos
+  </button>
+</section>
+
 </body>
 </html>
