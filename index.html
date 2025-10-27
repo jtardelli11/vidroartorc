@@ -434,16 +434,13 @@
         <form class="space-y-8" onsubmit="return false;">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <input type="text" id="clienteNome" placeholder="Nome do Cliente" class="input-field">
-            <input type="text" id="clienteTelefone" placeholder="Whatsapp" class="input-field">
+            <input type="text" id="clienteTelefone" placeholder="Telefone" class="input-field">
             <input type="email" id="clienteEmail" placeholder="E-mail" class="input-field">
             <input type="text" id="clienteEndereco" placeholder="Endereço da Obra" class="input-field">
-            <div class="flex flex-col gap-2">
-  <label for="percentualDesconto" class="font-medium text-gray-300">
-    Desconto (%): <span id="valorDescontoLabel" class="text-green-400 font-semibold">0%</span>
-  </label>
-  <input type="range" id="percentualDesconto" min="0" max="10" step="0.5" value="0"
-         class="w-full accent-green-600 cursor-pointer">
-</div>
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="pagamentoAVista" class="input-field">
+              <label for="pagamentoAVista" class="font-medium">Pagamento à Vista (3% de desconto)</label>
+            </div>
           </div>
           <hr class="my-8">
           <div class="grid grid-cols-1 gap-6">
@@ -507,13 +504,20 @@
 <div id="modalHistorico" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
   <div class="bg-white p-6 rounded-2xl w-11/12 max-w-lg shadow-2xl text-gray-800">
     <h2 class="text-2xl font-bold mb-4 text-center text-green-800">Histórico de Orçamentos</h2>
+    
     <ul id="listaHistorico" class="text-gray-700 mb-4 max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50"></ul>
+
     <div class="flex justify-between items-center">
-      <button id="limparHistorico" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">🧹 Limpar Tudo</button>
-      <button id="fecharHistorico" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">Fechar</button>
+      <button id="limparHistorico" 
+              class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+        🧹 Limpar Tudo
+      </button>
+      <button id="fecharHistorico" 
+              class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
+        Fechar
+      </button>
     </div>
   </div>
-</div>
   <script>
     // Array para armazenar os produtos adicionados
     let produtosAdicionados = [];
@@ -729,16 +733,6 @@
       document.getElementById("produtoCor").value = '#ffffff'; // Reseta a cor para branco
       document.getElementById("produtoCorNome").value = ''; // Limpa o nome da cor
     }
-
-    // Atualiza o valor do desconto conforme o usuário arrasta o slider
-const sliderDesconto = document.getElementById("percentualDesconto");
-const labelDesconto = document.getElementById("valorDescontoLabel");
-
-if (sliderDesconto) {
-  sliderDesconto.addEventListener("input", () => {
-    labelDesconto.textContent = `${sliderDesconto.value}%`;
-  });
-}
 
     // Função principal para gerar o PDF
     async function gerarPDF() {
@@ -1026,18 +1020,19 @@ if (sliderDesconto) {
       doc.text(`R$ ${totalGeralOrcamento.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
       y += lineSpacing;
 
-      const percentualDesconto = parseFloat(document.getElementById("percentualDesconto").value) || 0;
-let valorDesconto = 0;
-let valorFinalComDesconto = totalGeralOrcamento;
+      const isPagamentoAVista = document.getElementById("pagamentoAVista").checked;
+      const percentualDesconto = 0.03;
+      let valorDesconto = 0;
+      let valorFinalComDesconto = totalGeralOrcamento;
 
-if (percentualDesconto > 0) {
-  valorDesconto = totalGeralOrcamento * (percentualDesconto / 100);
-  valorFinalComDesconto = totalGeralOrcamento - valorDesconto;
-
-  doc.text(`DESCONTO (${percentualDesconto.toFixed(1)}%):`, doc.internal.pageSize.width - margin - 55, y + lineSpacing, { align: "left" });
-  doc.text(`- R$ ${valorDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
-  y += lineSpacing;
-}
+      if (isPagamentoAVista) {
+          valorDesconto = totalGeralOrcamento * percentualDesconto;
+          valorFinalComDesconto = totalGeralOrcamento - valorDesconto;
+          // Desconto alinhado à direita
+          doc.text(`DESCONTO (3% à vista):`, doc.internal.pageSize.width - margin - 55, y + lineSpacing, { align: "left" });
+          doc.text(`- R$ ${valorDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
+          y += lineSpacing;
+      }
 
       doc.setDrawColor(headerColor);
       doc.setLineWidth(0.7);
@@ -1106,8 +1101,7 @@ historico.push({
     telefone: document.getElementById("clienteTelefone").value,
     email: document.getElementById("clienteEmail").value,
     endereco: document.getElementById("clienteEndereco").value,
-    pagamentoAVista: false
-
+    pagamentoAVista: document.getElementById("pagamentoAVista").checked
   },
   produtos: produtosAdicionados
 });
@@ -1145,10 +1139,43 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   btnHistorico.addEventListener('click', () => {
-  atualizarHistorico();
-  modalHistorico.classList.remove('hidden');
+    const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
+    listaHistorico.innerHTML = '';
+
+    if (historico.length === 0) {
+      listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Nenhum orçamento salvo ainda.</li>`;
+    } else {
+      historico.slice().reverse().forEach((item, i) => {
+  const realIndex = historico.length - 1 - i; // índice correto no array original
+
+  const li = document.createElement('li');
+  li.className = "flex justify-between items-center border-b py-2 text-sm";
+  const primeiraFoto = item.produtos?.[0]?.foto || "";
+
+li.innerHTML = `
+  <div class="flex items-center gap-3">
+    ${primeiraFoto ? `<img src="${primeiraFoto}" alt="Produto" class="w-14 h-14 object-cover rounded-lg border border-gray-300">` : ""}
+    <div>
+      <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
+      <span class="text-gray-600">${item.nome}</span><br>
+      <span class="text-gray-500 text-sm">${item.data}</span>
+    </div>
+  </div>
+  <div class="text-right space-y-1">
+    <span class="text-gray-800 font-bold block mb-1">R$ ${item.valor || "0.00"}</span>
+    <button onclick="editarOrcamento(${realIndex})"
+      class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition">✏️ Editar</button>
+    <button onclick="removerOrcamento(${realIndex})"
+      class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition">🗑️ Excluir</button>
+  </div>
+`;
+  listaHistorico.appendChild(li);
 });
 
+    }
+
+    modalHistorico.classList.remove('hidden');
+  });
 
   fecharHistorico.addEventListener('click', () => modalHistorico.classList.add('hidden'));
 
@@ -1170,156 +1197,44 @@ window.baixarOrcamento = function(index) {
   alert(`Aqui entrará o download do arquivo '${item.nome}' — futuro recurso.`);
 };
 
-// 🗑️ Função para remover um orçamento específico
-// ✏️ Corrigida: editar orçamentos antigos e novos
+// ✏️ Função para editar um orçamento salvo
 window.editarOrcamento = function(index) {
   const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
   const orcamento = historico[index];
   if (!orcamento) return alert("Orçamento não encontrado.");
 
-  // Fecha o modal do histórico
-  document.getElementById("modalHistorico").classList.add("hidden");
+  // Preenche campos do cliente
+  document.getElementById("clienteNome").value = orcamento.dadosCliente.nome || "";
+  document.getElementById("clienteTelefone").value = orcamento.dadosCliente.telefone || "";
+  document.getElementById("clienteEmail").value = orcamento.dadosCliente.email || "";
+  document.getElementById("clienteEndereco").value = orcamento.dadosCliente.endereco || "";
+  document.getElementById("pagamentoAVista").checked = orcamento.dadosCliente.pagamentoAVista || false;
 
-  // Preenche os dados do cliente (funciona mesmo em orçamentos antigos)
-  const dados = orcamento.dadosCliente || {};
-  document.getElementById("clienteNome").value = dados.nome || orcamento.cliente || "";
-  document.getElementById("clienteTelefone").value = dados.telefone || "";
-  document.getElementById("clienteEmail").value = dados.email || "";
-  document.getElementById("clienteEndereco").value = dados.endereco || "";
-
-  // Carrega os produtos no painel principal
+  // Carrega os produtos
   produtosAdicionados = orcamento.produtos || [];
   renderizarProdutosAdicionados();
 
-  // Rola até o painel de orçamento
+  // Fecha o modal e rola até o painel
+  document.getElementById("modalHistorico").classList.add("hidden");
   document.getElementById("orcamento").scrollIntoView({ behavior: "smooth" });
-
-  alert("Os dados do orçamento foram carregados para edição.");
 };
 
+// 🗑️ Função para remover um orçamento específico
+window.removerOrcamento = function(index) {
+  let historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
+  const item = historico[index];
+  if (!item) return alert("Orçamento não encontrado.");
+
+  if (confirm(`Deseja realmente excluir o orçamento de ${item.cliente}?`)) {
+    historico.splice(index, 1); // remove apenas esse orçamento
+    localStorage.setItem('historicoPDFs', JSON.stringify(historico));
+    alert("Orçamento removido com sucesso!");
     // Atualiza a lista automaticamente
     document.getElementById('btnHistorico').click();
   }
 };
 
-
-    // ==========================
-// 📞 COMUNICAÇÃO E PÓS-VENDA
-// ==========================
-
-// Função para enviar orçamento via WhatsApp
-window.enviarWhatsApp = function (index) {
-  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
-  const item = historico[index];
-  if (!item) return alert("Orçamento não encontrado.");
-
-  const numeroCliente = (document.getElementById("clienteTelefone").value || "")
-    .replace(/\D/g, ""); // remove tudo que não é número
-
-  if (!numeroCliente) {
-    alert("Número do cliente não informado no orçamento.");
-    return;
-  }
-
-  const mensagem = encodeURIComponent(
-    `Olá ${item.cliente}, tudo bem? 👋\n\nSegue seu orçamento da VIDROART 📋\nValor total: R$ ${item.valor}\n\nConfira o PDF completo aqui:\n(Abra o PDF gerado e envie o link manualmente caso ele não esteja hospedado)`
-  );
-
-  const linkWhats = `https://wa.me/55${numeroCliente}?text=${mensagem}`;
-  window.open(linkWhats, "_blank");
-
-  // Marca no histórico o envio
-  item.enviadoWhats = true;
-  item.dataEnvio = new Date().toLocaleString("pt-BR");
-  item.respondeu = false;
-  localStorage.setItem("historicoPDFs", JSON.stringify(historico));
-  atualizarHistorico();
-};
-
-// Envia mensagem de acompanhamento (manual)
-window.enviarFollowUp = function (index) {
-  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
-  const item = historico[index];
-  if (!item) return alert("Orçamento não encontrado.");
-
-  const numeroCliente = (document.getElementById("clienteTelefone").value || "")
-    .replace(/\D/g, "");
-  if (!numeroCliente) {
-    alert("Número do cliente não informado no orçamento.");
-    return;
-  }
-
-  const mensagem = encodeURIComponent(
-    `Olá ${item.cliente}, tudo bem? 😊\n\nVocê chegou a ver o orçamento que enviei ontem?\nPosso te ajudar com alguma dúvida?`
-  );
-
-  const linkWhats = `https://wa.me/55${numeroCliente}?text=${mensagem}`;
-  window.open(linkWhats, "_blank");
-};
-
-// Marca se o cliente respondeu ou não
-window.marcarRespondido = function (index, valor) {
-  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
-  if (!historico[index]) return;
-  historico[index].respondeu = valor;
-  localStorage.setItem("historicoPDFs", JSON.stringify(historico));
-  atualizarHistorico();
-};
-
-// Atualiza o histórico visualmente
-function atualizarHistorico() {
-  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
-  const listaHistorico = document.getElementById("listaHistorico");
-  listaHistorico.innerHTML = "";
-
-  if (historico.length === 0) {
-    listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Nenhum orçamento salvo ainda.</li>`;
-    return;
-  }
-
-historico.slice().reverse().forEach((item, i) => {
-  const realIndex = historico.length - 1 - i;
-  const primeiraFoto = item.produtos?.[0]?.foto || "";
-  const status = item.respondeu
-    ? `<span class="text-green-700 font-semibold">✅ Respondido</span>`
-    : `<span class="text-yellow-600 font-semibold">⏳ Aguardando</span>`;
-
-  const li = document.createElement("li");
-  li.className = "flex justify-between items-center border-b py-2 text-sm bg-gray-50 hover:bg-gray-100 transition rounded-lg px-3";
-  li.innerHTML = `
-    <div class="flex items-center gap-3">
-      ${primeiraFoto ? `<img src="${primeiraFoto}" class="w-14 h-14 rounded-lg border border-gray-300 object-cover">` : ""}
-      <div>
-        <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
-        <span class="text-gray-600">${item.nome}</span><br>
-        <span class="text-gray-500 text-xs">${item.data}</span><br>
-        ${status}
-      </div>
-    </div>
-    <div class="flex flex-col items-end gap-2">
-      <span class="text-gray-800 font-bold block mb-1">R$ ${item.valor}</span>
-      <div class="flex gap-2">
-        <button onclick="enviarWhatsApp(${realIndex})"
-          class="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition flex items-center gap-1">
-          <i class="fab fa-whatsapp"></i> Enviar
-        </button>
-        <button onclick="editarOrcamento(${realIndex})"
-          class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">✏️ Editar</button>
-        <button onclick="removerOrcamento(${realIndex})"
-          class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition">🗑️ Excluir</button>
-      </div>
-      <div class="flex gap-2 mt-1">
-        <button onclick="marcarRespondido(${realIndex}, true)"
-          class="bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700 text-xs">✅ Respondido</button>
-        <button onclick="marcarRespondido(${realIndex}, false)"
-          class="bg-yellow-600 text-white px-2 py-1 rounded hover:bg-yellow-700 text-xs">⏳ Aguardando</button>
-      </div>
-    </div>
-  `;
-  listaHistorico.appendChild(li);
-});
-
-}
   </script>
+</div>
 </body>
 </html>
