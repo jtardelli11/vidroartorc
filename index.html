@@ -1172,7 +1172,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
- btnHistorico.addEventListener('click', () => {
+ btnHistorico.addEventListener("click", () => {
+  atualizarGestaoFinanceira(); // Atualiza os totais antes de exibir
   const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
   listaHistorico.innerHTML = "";
 
@@ -1184,9 +1185,7 @@ document.addEventListener('DOMContentLoaded', () => {
   historico.slice().reverse().forEach((item, i) => {
     const realIndex = historico.length - 1 - i;
     const primeiraFoto = item.produtos?.[0]?.foto || "";
-    const status = item.respondeu
-      ? `<span class="text-green-700 font-semibold">✅ Respondido</span>`
-      : `<span class="text-yellow-600 font-semibold">⏳ Aguardando</span>`;
+    const concluido = item.concluido === true;
 
     const li = document.createElement("li");
     li.className = "flex justify-between items-center border-b py-2 text-sm bg-gray-50 hover:bg-gray-100 transition rounded-lg px-3";
@@ -1196,8 +1195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div>
           <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
           <span class="text-gray-600">${item.nome}</span><br>
-          <span class="text-gray-500 text-xs">${item.data}</span><br>
-          ${status}
+          <span class="text-gray-500 text-xs">${item.data}</span>
         </div>
       </div>
       <div class="flex flex-col items-end gap-2">
@@ -1211,12 +1209,11 @@ document.addEventListener('DOMContentLoaded', () => {
             class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">✏️ Editar</button>
           <button onclick="removerOrcamento(${realIndex})"
             class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition">🗑️ Excluir</button>
-        </div>
-        <div class="flex gap-2 mt-1">
-          <button onclick="marcarRespondido(${realIndex}, true)"
-            class="bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700 text-xs">✅ Respondido</button>
-          <button onclick="marcarRespondido(${realIndex}, false)"
-            class="bg-yellow-600 text-white px-2 py-1 rounded hover:bg-yellow-700 text-xs">⏳ Aguardando</button>
+          ${
+            concluido
+              ? `<button disabled class='bg-gray-400 text-white px-3 py-1 rounded-lg cursor-not-allowed'>✔️ Concluído</button>`
+              : `<button onclick="concluirVenda(${realIndex})" class="bg-amber-500 text-white px-3 py-1 rounded-lg hover:bg-amber-600 transition">✅ Concluir</button>`
+          }
         </div>
       </div>
     `;
@@ -1225,6 +1222,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   modalHistorico.classList.remove("hidden");
 });
+
 
 
   fecharHistorico.addEventListener('click', () => modalHistorico.classList.add('hidden'));
@@ -1324,24 +1322,24 @@ function atualizarGestaoFinanceira() {
   });
 
   let totalOrcado = 0;
-  let totalAprovado = 0;
+  let totalConcluido = 0;
 
   orcamentosMes.forEach(o => {
-    const valor = parseFloat(o.valor) || 0;
+    const valor = parseFloat(String(o.valor).replace(",", ".").replace("R$", "").trim()) || 0;
     totalOrcado += valor;
-    if (o.respondeu) totalAprovado += valor;
+    if (o.concluido === true) totalConcluido += valor;
   });
 
-  const lucroEstimado = totalAprovado * 0.25; // margem simulada de 25%
-  const percentualConversao = totalOrcado > 0
-    ? ((totalAprovado / totalOrcado) * 100).toFixed(1)
-    : 0;
+  const lucroEstimado = totalConcluido * 0.25;
+  const percentualConversao =
+    totalOrcado > 0 ? ((totalConcluido / totalOrcado) * 100).toFixed(1) : 0;
 
   document.getElementById("totalOrcado").textContent = `R$ ${totalOrcado.toFixed(2)}`;
-  document.getElementById("totalAprovado").textContent = `R$ ${totalAprovado.toFixed(2)}`;
+  document.getElementById("totalAprovado").textContent = `R$ ${totalConcluido.toFixed(2)}`;
   document.getElementById("lucroEstimado").textContent = `R$ ${lucroEstimado.toFixed(2)}`;
   document.getElementById("percentualConversao").textContent = `${percentualConversao}%`;
 }
+
 
 // 📤 Exportar relatório mensal
 function exportarRelatorio(tipo) {
@@ -1377,6 +1375,19 @@ function atualizarHistoricoComGestao() {
   });
 }
 document.addEventListener("DOMContentLoaded", atualizarHistoricoComGestao);
+
+    function concluirVenda(index) {
+  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
+  if (!historico[index]) return;
+
+  if (confirm(`Marcar o orçamento de ${historico[index].cliente} como concluído?`)) {
+    historico[index].concluido = true;
+    localStorage.setItem("historicoPDFs", JSON.stringify(historico));
+    atualizarGestaoFinanceira();
+    document.getElementById("btnHistorico").click();
+  }
+}
+
 
 
   </script>
