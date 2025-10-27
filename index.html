@@ -1279,7 +1279,7 @@ window.enviarWhatsApp = function (index) {
   if (!numeroCliente) return alert("Preencha o número do cliente no campo 'Telefone'.");
 
   const mensagem = encodeURIComponent(
-    `Olá ${item.cliente || "cliente"}, tudo bem? 👋\n\nSegue seu orçamento da VIDROART 📋\nValor total: R$ ${item.valor}\n\n(Abra o PDF gerado e envie o link manualmente caso não esteja hospedado)`
+    `Olá ${item.cliente || "cliente"}, tudo bem? \n\nSegue seu orçamento da VIDROART \nValor total: R$ ${item.valor}\n\n(PDF)`
   );
 
   const link = `https://wa.me/55${numeroCliente}?text=${mensagem}`;
