@@ -1173,6 +1173,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
  btnHistorico.addEventListener('click', () => {
+  // 🔁 Atualiza o painel da Gestão Financeira antes de mostrar o histórico
+  atualizarGestaoFinanceira();
+
   const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
   listaHistorico.innerHTML = "";
 
@@ -1182,9 +1185,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   historico.slice().reverse().forEach((item, i) => {
-    const realIndex = historico.length - 1 - i;
-    const primeiraFoto = item.produtos?.[0]?.foto || "";
-    const status = item.respondeu
+    // ... resto do código pra montar cada item
+  });
+
+  modalHistorico.classList.remove("hidden");
+});
 
     const li = document.createElement("li");
     li.className = "flex justify-between items-center border-b py-2 text-sm bg-gray-50 hover:bg-gray-100 transition rounded-lg px-3";
@@ -1325,7 +1330,7 @@ function atualizarGestaoFinanceira() {
   let totalConcluido = 0;
 
   orcamentosMes.forEach(o => {
-    const valor = parseFloat(o.valor) || 0;
+    const valor = parseFloat(String(o.valor).replace(",", ".").replace("R$", "").trim()) || 0;
     totalOrcado += valor;
     if (o.concluido === true) totalConcluido += valor;
   });
