@@ -437,10 +437,13 @@
             <input type="text" id="clienteTelefone" placeholder="Telefone" class="input-field">
             <input type="email" id="clienteEmail" placeholder="E-mail" class="input-field">
             <input type="text" id="clienteEndereco" placeholder="Endereço da Obra" class="input-field">
-            <div class="flex items-center gap-2">
-              <input type="checkbox" id="pagamentoAVista" class="input-field">
-              <label for="pagamentoAVista" class="font-medium">Pagamento à Vista (3% de desconto)</label>
-            </div>
+            <div class="flex flex-col gap-2">
+  <label for="percentualDesconto" class="font-medium text-gray-300">
+    Desconto (%): <span id="valorDescontoLabel" class="text-green-400 font-semibold">0%</span>
+  </label>
+  <input type="range" id="percentualDesconto" min="0" max="10" step="0.5" value="0"
+         class="w-full accent-green-600 cursor-pointer">
+</div>
           </div>
           <hr class="my-8">
           <div class="grid grid-cols-1 gap-6">
@@ -504,20 +507,13 @@
 <div id="modalHistorico" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
   <div class="bg-white p-6 rounded-2xl w-11/12 max-w-lg shadow-2xl text-gray-800">
     <h2 class="text-2xl font-bold mb-4 text-center text-green-800">Histórico de Orçamentos</h2>
-    
     <ul id="listaHistorico" class="text-gray-700 mb-4 max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50"></ul>
-
     <div class="flex justify-between items-center">
-      <button id="limparHistorico" 
-              class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
-        🧹 Limpar Tudo
-      </button>
-      <button id="fecharHistorico" 
-              class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
-        Fechar
-      </button>
+      <button id="limparHistorico" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">🧹 Limpar Tudo</button>
+      <button id="fecharHistorico" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">Fechar</button>
     </div>
   </div>
+</div>
   <script>
     // Array para armazenar os produtos adicionados
     let produtosAdicionados = [];
@@ -733,6 +729,16 @@
       document.getElementById("produtoCor").value = '#ffffff'; // Reseta a cor para branco
       document.getElementById("produtoCorNome").value = ''; // Limpa o nome da cor
     }
+
+    // Atualiza o valor do desconto conforme o usuário arrasta o slider
+const sliderDesconto = document.getElementById("percentualDesconto");
+const labelDesconto = document.getElementById("valorDescontoLabel");
+
+if (sliderDesconto) {
+  sliderDesconto.addEventListener("input", () => {
+    labelDesconto.textContent = `${sliderDesconto.value}%`;
+  });
+}
 
     // Função principal para gerar o PDF
     async function gerarPDF() {
@@ -1020,19 +1026,18 @@
       doc.text(`R$ ${totalGeralOrcamento.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
       y += lineSpacing;
 
-      const isPagamentoAVista = document.getElementById("pagamentoAVista").checked;
-      const percentualDesconto = 0.03;
-      let valorDesconto = 0;
-      let valorFinalComDesconto = totalGeralOrcamento;
+      const percentualDesconto = parseFloat(document.getElementById("percentualDesconto").value) || 0;
+let valorDesconto = 0;
+let valorFinalComDesconto = totalGeralOrcamento;
 
-      if (isPagamentoAVista) {
-          valorDesconto = totalGeralOrcamento * percentualDesconto;
-          valorFinalComDesconto = totalGeralOrcamento - valorDesconto;
-          // Desconto alinhado à direita
-          doc.text(`DESCONTO (3% à vista):`, doc.internal.pageSize.width - margin - 55, y + lineSpacing, { align: "left" });
-          doc.text(`- R$ ${valorDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
-          y += lineSpacing;
-      }
+if (percentualDesconto > 0) {
+  valorDesconto = totalGeralOrcamento * (percentualDesconto / 100);
+  valorFinalComDesconto = totalGeralOrcamento - valorDesconto;
+
+  doc.text(`DESCONTO (${percentualDesconto.toFixed(1)}%):`, doc.internal.pageSize.width - margin - 55, y + lineSpacing, { align: "left" });
+  doc.text(`- R$ ${valorDesconto.toFixed(2)}`, doc.internal.pageSize.width - margin, y + lineSpacing, { align: "right" });
+  y += lineSpacing;
+}
 
       doc.setDrawColor(headerColor);
       doc.setLineWidth(0.7);
@@ -1101,7 +1106,8 @@ historico.push({
     telefone: document.getElementById("clienteTelefone").value,
     email: document.getElementById("clienteEmail").value,
     endereco: document.getElementById("clienteEndereco").value,
-    pagamentoAVista: document.getElementById("pagamentoAVista").checked
+    pagamentoAVista: false
+
   },
   produtos: produtosAdicionados
 });
@@ -1235,6 +1241,5 @@ window.removerOrcamento = function(index) {
 };
 
   </script>
-</div>
 </body>
 </html>
