@@ -1204,26 +1204,37 @@ window.baixarOrcamento = function(index) {
 };
 
 // ✏️ Função para editar um orçamento salvo
+// ✏️ Corrigido: editar orçamentos antigos e novos
 window.editarOrcamento = function(index) {
   const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
   const orcamento = historico[index];
   if (!orcamento) return alert("Orçamento não encontrado.");
 
-  // Preenche campos do cliente
-  document.getElementById("clienteNome").value = orcamento.dadosCliente.nome || "";
-  document.getElementById("clienteTelefone").value = orcamento.dadosCliente.telefone || "";
-  document.getElementById("clienteEmail").value = orcamento.dadosCliente.email || "";
-  document.getElementById("clienteEndereco").value = orcamento.dadosCliente.endereco || "";
-  document.getElementById("pagamentoAVista").checked = orcamento.dadosCliente.pagamentoAVista || false;
+  // Fecha o modal do histórico
+  document.getElementById("modalHistorico").classList.add("hidden");
 
-  // Carrega os produtos
+  // Garante compatibilidade com versões antigas do histórico
+  const dados = orcamento.dadosCliente || {};
+  document.getElementById("clienteNome").value = dados.nome || orcamento.cliente || "";
+  document.getElementById("clienteTelefone").value = dados.telefone || "";
+  document.getElementById("clienteEmail").value = dados.email || "";
+  document.getElementById("clienteEndereco").value = dados.endereco || "";
+
+  // Carrega produtos
   produtosAdicionados = orcamento.produtos || [];
   renderizarProdutosAdicionados();
 
-  // Fecha o modal e rola até o painel
-  document.getElementById("modalHistorico").classList.add("hidden");
+  // Mostra aviso visual moderno
+  const aviso = document.createElement("div");
+  aviso.textContent = `✏️ Editando orçamento de ${dados.nome || orcamento.cliente || "cliente"}`;
+  aviso.className = "fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in";
+  document.body.appendChild(aviso);
+  setTimeout(() => aviso.remove(), 2500);
+
+  // Rola até o painel de orçamento
   document.getElementById("orcamento").scrollIntoView({ behavior: "smooth" });
 };
+
 
 // 🗑️ Função para remover um orçamento específico
 window.removerOrcamento = function(index) {
