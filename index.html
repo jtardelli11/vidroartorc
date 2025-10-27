@@ -1203,28 +1203,6 @@ window.baixarOrcamento = function(index) {
   alert(`Aqui entrará o download do arquivo '${item.nome}' — futuro recurso.`);
 };
 
-// ✏️ Função para editar um orçamento salvo
-window.editarOrcamento = function(index) {
-  const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
-  const orcamento = historico[index];
-  if (!orcamento) return alert("Orçamento não encontrado.");
-
-  // Preenche campos do cliente
-  document.getElementById("clienteNome").value = orcamento.dadosCliente.nome || "";
-  document.getElementById("clienteTelefone").value = orcamento.dadosCliente.telefone || "";
-  document.getElementById("clienteEmail").value = orcamento.dadosCliente.email || "";
-  document.getElementById("clienteEndereco").value = orcamento.dadosCliente.endereco || "";
-  document.getElementById("pagamentoAVista").checked = orcamento.dadosCliente.pagamentoAVista || false;
-
-  // Carrega os produtos
-  produtosAdicionados = orcamento.produtos || [];
-  renderizarProdutosAdicionados();
-
-  // Fecha o modal e rola até o painel
-  document.getElementById("modalHistorico").classList.add("hidden");
-  document.getElementById("orcamento").scrollIntoView({ behavior: "smooth" });
-};
-
 // 🗑️ Função para remover um orçamento específico
 // ✏️ Corrigida: editar orçamentos antigos e novos
 window.editarOrcamento = function(index) {
