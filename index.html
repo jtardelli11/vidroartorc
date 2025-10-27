@@ -1226,15 +1226,32 @@ window.editarOrcamento = function(index) {
 };
 
 // 🗑️ Função para remover um orçamento específico
-window.removerOrcamento = function(index) {
-  let historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
-  const item = historico[index];
-  if (!item) return alert("Orçamento não encontrado.");
+// ✏️ Corrigida: editar orçamentos antigos e novos
+window.editarOrcamento = function(index) {
+  const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
+  const orcamento = historico[index];
+  if (!orcamento) return alert("Orçamento não encontrado.");
 
-  if (confirm(`Deseja realmente excluir o orçamento de ${item.cliente}?`)) {
-    historico.splice(index, 1); // remove apenas esse orçamento
-    localStorage.setItem('historicoPDFs', JSON.stringify(historico));
-    alert("Orçamento removido com sucesso!");
+  // Fecha o modal do histórico
+  document.getElementById("modalHistorico").classList.add("hidden");
+
+  // Preenche os dados do cliente (funciona mesmo em orçamentos antigos)
+  const dados = orcamento.dadosCliente || {};
+  document.getElementById("clienteNome").value = dados.nome || orcamento.cliente || "";
+  document.getElementById("clienteTelefone").value = dados.telefone || "";
+  document.getElementById("clienteEmail").value = dados.email || "";
+  document.getElementById("clienteEndereco").value = dados.endereco || "";
+
+  // Carrega os produtos no painel principal
+  produtosAdicionados = orcamento.produtos || [];
+  renderizarProdutosAdicionados();
+
+  // Rola até o painel de orçamento
+  document.getElementById("orcamento").scrollIntoView({ behavior: "smooth" });
+
+  alert("Os dados do orçamento foram carregados para edição.");
+};
+
     // Atualiza a lista automaticamente
     document.getElementById('btnHistorico').click();
   }
