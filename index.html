@@ -1145,43 +1145,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   btnHistorico.addEventListener('click', () => {
-    const historico = JSON.parse(localStorage.getItem('historicoPDFs')) || [];
-    listaHistorico.innerHTML = '';
-
-    if (historico.length === 0) {
-      listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Nenhum orçamento salvo ainda.</li>`;
-    } else {
-      historico.slice().reverse().forEach((item, i) => {
-  const realIndex = historico.length - 1 - i; // índice correto no array original
-
-  const li = document.createElement('li');
-  li.className = "flex justify-between items-center border-b py-2 text-sm";
-  const primeiraFoto = item.produtos?.[0]?.foto || "";
-
-li.innerHTML = `
-  <div class="flex items-center gap-3">
-    ${primeiraFoto ? `<img src="${primeiraFoto}" alt="Produto" class="w-14 h-14 object-cover rounded-lg border border-gray-300">` : ""}
-    <div>
-      <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
-      <span class="text-gray-600">${item.nome}</span><br>
-      <span class="text-gray-500 text-sm">${item.data}</span>
-    </div>
-  </div>
-  <div class="text-right space-y-1">
-    <span class="text-gray-800 font-bold block mb-1">R$ ${item.valor || "0.00"}</span>
-    <button onclick="editarOrcamento(${realIndex})"
-      class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition">✏️ Editar</button>
-    <button onclick="removerOrcamento(${realIndex})"
-      class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition">🗑️ Excluir</button>
-  </div>
-`;
-  listaHistorico.appendChild(li);
+  atualizarHistorico();
+  modalHistorico.classList.remove('hidden');
 });
 
-    }
-
-    modalHistorico.classList.remove('hidden');
-  });
 
   fecharHistorico.addEventListener('click', () => modalHistorico.classList.add('hidden'));
 
