@@ -1381,12 +1381,24 @@ document.addEventListener("DOMContentLoaded", atualizarHistoricoComGestao);
   if (!historico[index]) return;
 
   if (confirm(`Marcar o orçamento de ${historico[index].cliente} como concluído?`)) {
+    // Marca e salva
     historico[index].concluido = true;
     localStorage.setItem("historicoPDFs", JSON.stringify(historico));
+
+    // Atualiza o painel imediatamente
     atualizarGestaoFinanceira();
-    document.getElementById("btnHistorico").click();
+
+    // Fecha e reabre o modal (pra recarregar a lista)
+    modalHistorico.classList.add("hidden");
+    setTimeout(() => {
+      btnHistorico.click();
+    }, 100);
+
+    // Feedback
+    alert("Venda concluída com sucesso!");
   }
 }
+
 
 
 
