@@ -1353,26 +1353,26 @@ document.addEventListener("DOMContentLoaded", atualizarHistoricoComGestao);
 
     function concluirVenda(index) {
   const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
+  const modalHistorico = document.getElementById("modalHistorico"); // 🔹 garante acesso fora do escopo
+  const btnHistorico = document.getElementById("btnHistorico"); // 🔹 idem
+
   if (!historico[index]) return;
 
   if (confirm(`Marcar o orçamento de ${historico[index].cliente} como concluído?`)) {
-    // Marca e salva
     historico[index].concluido = true;
     localStorage.setItem("historicoPDFs", JSON.stringify(historico));
 
-    // Atualiza o painel imediatamente
     atualizarGestaoFinanceira();
 
-    // Fecha e reabre o modal (pra recarregar a lista)
     modalHistorico.classList.add("hidden");
     setTimeout(() => {
       btnHistorico.click();
     }, 100);
 
-    // Feedback
     alert("Venda concluída com sucesso!");
   }
 }
+
 
 
 
