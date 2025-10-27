@@ -1327,10 +1327,10 @@ function atualizarGestaoFinanceira() {
   orcamentosMes.forEach(o => {
     const valor = parseFloat(o.valor) || 0;
     totalOrcado += valor;
-    if (o.concluido) totalConcluido += valor;
+    if (o.concluido === true) totalConcluido += valor;
   });
 
-  const lucroEstimado = totalConcluido * 0.25; // margem simulada de 25%
+  const lucroEstimado = totalConcluido * 0.25;
   const percentualConversao = totalOrcado > 0
     ? ((totalConcluido / totalOrcado) * 100).toFixed(1)
     : 0;
@@ -1340,6 +1340,7 @@ function atualizarGestaoFinanceira() {
   document.getElementById("lucroEstimado").textContent = `R$ ${lucroEstimado.toFixed(2)}`;
   document.getElementById("percentualConversao").textContent = `${percentualConversao}%`;
 }
+
 
 
 // 📤 Exportar relatório mensal
@@ -1378,6 +1379,7 @@ function atualizarHistoricoComGestao() {
 document.addEventListener("DOMContentLoaded", atualizarHistoricoComGestao);
 
     // ✅ Marca a venda como concluída e atualiza o total
+// ✅ Marca a venda como concluída e atualiza o total
 function concluirVenda(index) {
   const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
   if (!historico[index]) return;
@@ -1387,10 +1389,19 @@ function concluirVenda(index) {
     localStorage.setItem("historicoPDFs", JSON.stringify(historico));
 
     alert("Venda concluída com sucesso!");
+
+    // Atualiza imediatamente os valores da gestão financeira
     atualizarGestaoFinanceira();
-    document.getElementById("btnHistorico").click(); // Atualiza visual do histórico
+
+    // Recarrega visualmente o histórico
+    const modalAberto = document.getElementById("modalHistorico");
+    if (!modalAberto.classList.contains("hidden")) {
+      const btnHistorico = document.getElementById("btnHistorico");
+      btnHistorico.click();
+    }
   }
 }
+
 
 
 
