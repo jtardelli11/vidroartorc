@@ -507,7 +507,35 @@
 <div id="modalHistorico" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
   <div class="bg-white p-6 rounded-2xl w-11/12 max-w-lg shadow-2xl text-gray-800">
     <h2 class="text-2xl font-bold mb-4 text-center text-green-800">Histórico de Orçamentos</h2>
-    <ul id="listaHistorico" class="text-gray-700 mb-4 max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50"></ul>
+    <!-- 💰 Gestão Financeira -->
+<section id="gestaoFinanceira" class="bg-white/60 backdrop-blur-md shadow-md rounded-2xl p-4 mb-6">
+  <h2 class="text-lg font-bold text-gray-800 mb-2">💰 Gestão Financeira</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+    <div class="p-3 bg-green-100 rounded-xl text-center">
+      <p class="text-gray-600 font-semibold">Total Orçado</p>
+      <p id="totalOrcado" class="text-lg font-bold text-green-700">R$ 0,00</p>
+    </div>
+    <div class="p-3 bg-blue-100 rounded-xl text-center">
+      <p class="text-gray-600 font-semibold">Total Aprovado</p>
+      <p id="totalAprovado" class="text-lg font-bold text-blue-700">R$ 0,00</p>
+    </div>
+    <div class="p-3 bg-amber-100 rounded-xl text-center">
+      <p class="text-gray-600 font-semibold">Lucro Estimado</p>
+      <p id="lucroEstimado" class="text-lg font-bold text-amber-700">R$ 0,00</p>
+    </div>
+    <div class="p-3 bg-purple-100 rounded-xl text-center">
+      <p class="text-gray-600 font-semibold">% Conversão</p>
+      <p id="percentualConversao" class="text-lg font-bold text-purple-700">0%</p>
+    </div>
+  </div>
+  <div class="flex justify-end mt-4 gap-2">
+    <button onclick="exportarRelatorio('pdf')" class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700">📄 PDF</button>
+    <button onclick="exportarRelatorio('excel')" class="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700">📊 Excel</button>
+  </div>
+</section>
+
+<ul id="listaHistorico" class="text-gray-700 mb-4 max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50"></ul>
+
     <div class="flex justify-between items-center">
       <button id="limparHistorico" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">🧹 Limpar Tudo</button>
       <button id="fecharHistorico" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">Fechar</button>
@@ -1283,6 +1311,72 @@ window.enviarWhatsApp = function (index) {
   const link = `https://wa.me/55${numeroCliente}?text=${mensagem}`;
   window.open(link, "_blank");
 };
+
+    // 💰 Gestão Financeira
+function atualizarGestaoFinanceira() {
+  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
+  const mesAtual = new Date().getMonth();
+  const anoAtual = new Date().getFullYear();
+
+  const orcamentosMes = historico.filter(o => {
+    const data = new Date(o.data);
+    return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+  });
+
+  let totalOrcado = 0;
+  let totalAprovado = 0;
+
+  orcamentosMes.forEach(o => {
+    const valor = parseFloat(o.valor) || 0;
+    totalOrcado += valor;
+    if (o.respondeu) totalAprovado += valor;
+  });
+
+  const lucroEstimado = totalAprovado * 0.25; // margem simulada de 25%
+  const percentualConversao = totalOrcado > 0
+    ? ((totalAprovado / totalOrcado) * 100).toFixed(1)
+    : 0;
+
+  document.getElementById("totalOrcado").textContent = `R$ ${totalOrcado.toFixed(2)}`;
+  document.getElementById("totalAprovado").textContent = `R$ ${totalAprovado.toFixed(2)}`;
+  document.getElementById("lucroEstimado").textContent = `R$ ${lucroEstimado.toFixed(2)}`;
+  document.getElementById("percentualConversao").textContent = `${percentualConversao}%`;
+}
+
+// 📤 Exportar relatório mensal
+function exportarRelatorio(tipo) {
+  const mes = new Date().toLocaleString("pt-BR", { month: "long" });
+  const ano = new Date().getFullYear();
+  const titulo = `Relatório Mensal – ${mes.charAt(0).toUpperCase() + mes.slice(1)} ${ano}`;
+
+  if (tipo === "pdf") {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text(titulo, 20, 20);
+    doc.text(document.getElementById("gestaoFinanceira").innerText, 20, 40);
+    doc.save(`${titulo}.pdf`);
+  } else if (tipo === "excel") {
+    let conteudo = "Categoria\tValor\n";
+    conteudo += `Total Orçado\t${document.getElementById("totalOrcado").innerText}\n`;
+    conteudo += `Total Aprovado\t${document.getElementById("totalAprovado").innerText}\n`;
+    conteudo += `Lucro Estimado\t${document.getElementById("lucroEstimado").innerText}\n`;
+    conteudo += `Conversão\t${document.getElementById("percentualConversao").innerText}\n`;
+    const blob = new Blob([conteudo], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${titulo}.xls`;
+    link.click();
+  }
+}
+
+// 🔄 Atualiza junto com o histórico
+function atualizarHistoricoComGestao() {
+  const btnHistorico = document.getElementById("btnHistorico");
+  btnHistorico.addEventListener("click", () => {
+    atualizarGestaoFinanceira();
+  });
+}
+document.addEventListener("DOMContentLoaded", atualizarHistoricoComGestao);
 
 
   </script>
