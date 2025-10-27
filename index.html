@@ -1173,9 +1173,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
  btnHistorico.addEventListener('click', () => {
-  // 🔁 Atualiza o painel da Gestão Financeira antes de mostrar o histórico
-  atualizarGestaoFinanceira();
-
   const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
   listaHistorico.innerHTML = "";
 
@@ -1185,44 +1182,44 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   historico.slice().reverse().forEach((item, i) => {
-    // ... resto do código pra montar cada item
-  });
-
-  modalHistorico.classList.remove("hidden");
-});
+    const realIndex = historico.length - 1 - i;
+    const primeiraFoto = item.produtos?.[0]?.foto || "";
+    const status = item.respondeu
+      ? `<span class="text-green-700 font-semibold">✅ Respondido</span>`
+      : `<span class="text-yellow-600 font-semibold">⏳ Aguardando</span>`;
 
     const li = document.createElement("li");
     li.className = "flex justify-between items-center border-b py-2 text-sm bg-gray-50 hover:bg-gray-100 transition rounded-lg px-3";
-   li.innerHTML = `
-  <div class="flex items-center justify-between bg-white shadow-md rounded-xl p-3 border border-gray-200">
-    <div class="flex items-center gap-3">
-      ${primeiraFoto ? `<img src="${primeiraFoto}" class="w-16 h-16 object-cover rounded-lg border">` : ""}
-      <div>
-        <p class="font-semibold text-green-700">${item.cliente || "Cliente"}</p>
-        <p class="text-gray-600 text-sm">${item.nome}</p>
-        <p class="text-gray-400 text-xs">${item.data}</p>
+    li.innerHTML = `
+      <div class="flex items-center gap-3">
+        ${primeiraFoto ? `<img src="${primeiraFoto}" class="w-14 h-14 rounded-lg border border-gray-300 object-cover">` : ""}
+        <div>
+          <span class="font-semibold text-green-700">${item.cliente || "Cliente não informado"}</span><br>
+          <span class="text-gray-600">${item.nome}</span><br>
+          <span class="text-gray-500 text-xs">${item.data}</span><br>
+          ${status}
+        </div>
       </div>
-    </div>
-    <div class="text-right">
-      <p class="font-bold text-lg text-gray-800">R$ ${item.valor || "0.00"}</p>
-      <div class="flex gap-2 justify-end mt-1">
-        <button onclick="enviarWhatsApp(${realIndex})" class="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition">
-          💬 Enviar
-        </button>
-        <button onclick="editarOrcamento(${realIndex})" class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">
-          ✏️ Editar
-        </button>
-        <button onclick="removerOrcamento(${realIndex})" class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition">
-          🗑️ Excluir
-        </button>
-        <button onclick="concluirVenda(${realIndex})" class="bg-amber-500 text-white px-3 py-1 rounded-lg hover:bg-amber-600 transition">
-          ✅ Concluir
-        </button>
+      <div class="flex flex-col items-end gap-2">
+        <span class="text-gray-800 font-bold block mb-1">R$ ${item.valor}</span>
+        <div class="flex gap-2">
+          <button onclick="enviarWhatsApp(${realIndex})"
+            class="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition flex items-center gap-1">
+            <i class="fab fa-whatsapp"></i> Enviar
+          </button>
+          <button onclick="editarOrcamento(${realIndex})"
+            class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">✏️ Editar</button>
+          <button onclick="removerOrcamento(${realIndex})"
+            class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition">🗑️ Excluir</button>
+        </div>
+        <div class="flex gap-2 mt-1">
+          <button onclick="marcarRespondido(${realIndex}, true)"
+            class="bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700 text-xs">✅ Respondido</button>
+          <button onclick="marcarRespondido(${realIndex}, false)"
+            class="bg-yellow-600 text-white px-2 py-1 rounded hover:bg-yellow-700 text-xs">⏳ Aguardando</button>
+        </div>
       </div>
-    </div>
-  </div>
-`;
-
+    `;
     listaHistorico.appendChild(li);
   });
 
@@ -1327,26 +1324,24 @@ function atualizarGestaoFinanceira() {
   });
 
   let totalOrcado = 0;
-  let totalConcluido = 0;
+  let totalAprovado = 0;
 
   orcamentosMes.forEach(o => {
-    const valor = parseFloat(String(o.valor).replace(",", ".").replace("R$", "").trim()) || 0;
+    const valor = parseFloat(o.valor) || 0;
     totalOrcado += valor;
-    if (o.concluido === true) totalConcluido += valor;
+    if (o.respondeu) totalAprovado += valor;
   });
 
-  const lucroEstimado = totalConcluido * 0.25;
+  const lucroEstimado = totalAprovado * 0.25; // margem simulada de 25%
   const percentualConversao = totalOrcado > 0
-    ? ((totalConcluido / totalOrcado) * 100).toFixed(1)
+    ? ((totalAprovado / totalOrcado) * 100).toFixed(1)
     : 0;
 
   document.getElementById("totalOrcado").textContent = `R$ ${totalOrcado.toFixed(2)}`;
-  document.getElementById("totalAprovado").textContent = `R$ ${totalConcluido.toFixed(2)}`;
+  document.getElementById("totalAprovado").textContent = `R$ ${totalAprovado.toFixed(2)}`;
   document.getElementById("lucroEstimado").textContent = `R$ ${lucroEstimado.toFixed(2)}`;
   document.getElementById("percentualConversao").textContent = `${percentualConversao}%`;
 }
-
-
 
 // 📤 Exportar relatório mensal
 function exportarRelatorio(tipo) {
@@ -1382,32 +1377,6 @@ function atualizarHistoricoComGestao() {
   });
 }
 document.addEventListener("DOMContentLoaded", atualizarHistoricoComGestao);
-
-    // ✅ Marca a venda como concluída e atualiza o total
-// ✅ Marca a venda como concluída e atualiza o total
-function concluirVenda(index) {
-  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
-  if (!historico[index]) return;
-
-  if (confirm(`Marcar o orçamento de ${historico[index].cliente} como concluído?`)) {
-    historico[index].concluido = true;
-    localStorage.setItem("historicoPDFs", JSON.stringify(historico));
-
-    alert("Venda concluída com sucesso!");
-
-    // Atualiza imediatamente os valores da gestão financeira
-    atualizarGestaoFinanceira();
-
-    // Recarrega visualmente o histórico
-    const modalAberto = document.getElementById("modalHistorico");
-    if (!modalAberto.classList.contains("hidden")) {
-      const btnHistorico = document.getElementById("btnHistorico");
-      btnHistorico.click();
-    }
-  }
-}
-
-
 
 
   </script>
