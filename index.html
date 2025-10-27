@@ -1240,6 +1240,116 @@ window.removerOrcamento = function(index) {
   }
 };
 
+
+    // ==========================
+// 📞 COMUNICAÇÃO E PÓS-VENDA
+// ==========================
+
+// Função para enviar orçamento via WhatsApp
+window.enviarWhatsApp = function (index) {
+  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
+  const item = historico[index];
+  if (!item) return alert("Orçamento não encontrado.");
+
+  const numeroCliente = (document.getElementById("clienteTelefone").value || "")
+    .replace(/\D/g, ""); // remove tudo que não é número
+
+  if (!numeroCliente) {
+    alert("Número do cliente não informado no orçamento.");
+    return;
+  }
+
+  const mensagem = encodeURIComponent(
+    `Olá ${item.cliente}, tudo bem? 👋\n\nSegue seu orçamento da VIDROART 📋\nValor total: R$ ${item.valor}\n\nConfira o PDF completo aqui:\n(Abra o PDF gerado e envie o link manualmente caso ele não esteja hospedado)`
+  );
+
+  const linkWhats = `https://wa.me/55${numeroCliente}?text=${mensagem}`;
+  window.open(linkWhats, "_blank");
+
+  // Marca no histórico o envio
+  item.enviadoWhats = true;
+  item.dataEnvio = new Date().toLocaleString("pt-BR");
+  item.respondeu = false;
+  localStorage.setItem("historicoPDFs", JSON.stringify(historico));
+  atualizarHistorico();
+};
+
+// Envia mensagem de acompanhamento (manual)
+window.enviarFollowUp = function (index) {
+  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
+  const item = historico[index];
+  if (!item) return alert("Orçamento não encontrado.");
+
+  const numeroCliente = (document.getElementById("clienteTelefone").value || "")
+    .replace(/\D/g, "");
+  if (!numeroCliente) {
+    alert("Número do cliente não informado no orçamento.");
+    return;
+  }
+
+  const mensagem = encodeURIComponent(
+    `Olá ${item.cliente}, tudo bem? 😊\n\nVocê chegou a ver o orçamento que enviei ontem?\nPosso te ajudar com alguma dúvida?`
+  );
+
+  const linkWhats = `https://wa.me/55${numeroCliente}?text=${mensagem}`;
+  window.open(linkWhats, "_blank");
+};
+
+// Marca se o cliente respondeu ou não
+window.marcarRespondido = function (index, valor) {
+  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
+  if (!historico[index]) return;
+  historico[index].respondeu = valor;
+  localStorage.setItem("historicoPDFs", JSON.stringify(historico));
+  atualizarHistorico();
+};
+
+// Atualiza o histórico visualmente
+function atualizarHistorico() {
+  const historico = JSON.parse(localStorage.getItem("historicoPDFs")) || [];
+  const listaHistorico = document.getElementById("listaHistorico");
+  listaHistorico.innerHTML = "";
+
+  if (historico.length === 0) {
+    listaHistorico.innerHTML = `<li class="text-center text-gray-500 py-2">Nenhum orçamento salvo ainda.</li>`;
+    return;
+  }
+
+  historico.slice().reverse().forEach((item, i) => {
+    const realIndex = historico.length - 1 - i;
+    const primeiraFoto = item.produtos?.[0]?.foto || "";
+    const status = item.respondeu
+      ? `<span class="text-green-700 font-semibold">✅ Respondido</span>`
+      : `<span class="text-yellow-600 font-semibold">⏳ Aguardando</span>`;
+
+    const li = document.createElement("li");
+    li.className = "flex justify-between items-center border-b py-2 text-sm";
+    li.innerHTML = `
+      <div class="flex items-center gap-3">
+        ${primeiraFoto ? `<img src="${primeiraFoto}" class="w-14 h-14 rounded-lg border border-gray-300 object-cover">` : ""}
+        <div>
+          <span class="font-semibold text-green-700">${item.cliente}</span><br>
+          <span class="text-gray-600">${item.nome}</span><br>
+          <span class="text-gray-500 text-xs">${item.data}</span><br>
+          ${status}
+        </div>
+      </div>
+      <div class="text-right space-y-1">
+        <span class="text-gray-800 font-bold block mb-1">R$ ${item.valor}</span>
+        <button onclick="enviarWhatsApp(${realIndex})"
+          class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">💬 WhatsApp</button>
+        <button onclick="enviarFollowUp(${realIndex})"
+          class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition">📅 Acompanhar</button>
+        <button onclick="marcarRespondido(${realIndex}, true)"
+          class="bg-emerald-600 text-white px-3 py-1 rounded hover:bg-emerald-700 transition">✅ Respondeu</button>
+        <button onclick="marcarRespondido(${realIndex}, false)"
+          class="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700 transition">⏳ Aguardando</button>
+      </div>
+    `;
+    listaHistorico.appendChild(li);
+  });
+}
+
   </script>
 </body>
 </html>
